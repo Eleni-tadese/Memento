@@ -7,10 +7,15 @@ require('./src/db/pool')
 const app = express()
 const PORT = process.env.PORT || 5000
 
+const authRoutes = require('./src/routes/auth.routes')
+
 app.use(cors({
   origin: process.env.CLIENT_URL
 }))
 app.use(express.json())
+
+app.use('/api/auth', authRoutes)
+
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
