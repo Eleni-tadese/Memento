@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 5000
 const authRoutes = require('./src/routes/auth.routes')
 
 app.use(cors({
-  origin: process.env.CLIENT_URL
+  origin: function(origin, callback) {
+    if (!origin || origin.startsWith('http://localhost')) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true
 }))
 app.use(express.json())
 
