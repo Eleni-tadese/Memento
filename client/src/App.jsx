@@ -1,56 +1,36 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import PublicRoute from './components/PublicRoute'
 
-const Home = () => {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50" id="home-view">
-      <h1 className="text-3xl font-bold text-gray-800">Memento Home</h1>
-    </main>
-  )
-}
-
-const Login = () => {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50" id="login-view">
-      <h1 className="text-3xl font-bold text-gray-800">Login</h1>
-    </main>
-  )
-}
-
-const Signup = () => {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50" id="signup-view">
-      <h1 className="text-3xl font-bold text-gray-800">Signup</h1>
-    </main>
-  )
-}
-
-const Dashboard = () => {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50" id="dashboard-view">
-      <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-    </main>
-  )
-}
-
-const JoinPage = () => {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50" id="join-view">
-      <h1 className="text-3xl font-bold text-gray-800">Join Page</h1>
-    </main>
-  )
-}
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
+import JoinPage from './pages/JoinPage'
 
 export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/join/:token" element={<JoinPage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/join/:token" element={<JoinPage />} />
+
+          {/* Guest Only Routes */}
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
+
+          {/* Authenticated Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </Router>
   )
 }
