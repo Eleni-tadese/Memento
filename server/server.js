@@ -23,6 +23,15 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 
+const memoryRoutes = require('./src/routes/memory.routes')
+app.use('/api/memories', memoryRoutes)
+
+const mediaRoutes = require('./src/routes/media.routes')
+app.use('/api/media', mediaRoutes)
+
+const publicRoutes = require('./src/routes/public.routes')
+app.use('/api/public', publicRoutes)
+
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
