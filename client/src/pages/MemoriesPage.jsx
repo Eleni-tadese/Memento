@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { getMemories } from '../api/memories';
-import { getInviteLink } from '../api/auth';
 import AppLayout from '../components/AppLayout';
-import { SearchIcon, CaptureIcon } from '../components/Icons';
+import { SearchIcon } from '../components/Icons';
 
 const MemoriesPage = () => {
   const navigate = useNavigate();
@@ -12,19 +12,33 @@ const MemoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [error, setError] = useState('');
-  const [partnerJoined, setPartnerJoined] = useState(false);
 
-  useEffect(() => {
-    const fetchPartnerStatus = async () => {
-      try {
-        const data = await getInviteLink();
-        setPartnerJoined(data.partnerJoined);
-      } catch (err) {
-        console.error('Failed to fetch partner status:', err);
-      }
-    };
-    fetchPartnerStatus();
-  }, []);
+  // ── Couple quote / blessing ────────────────────────────────────────────────
+  const [coupleQuote, setCoupleQuote] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('memento_couple_quote') || 'null'); }
+    catch { return null; }
+  });
+  const [editingQuote, setEditingQuote] = useState(false);
+  const [tempQuote, setTempQuote] = useState({ text: '', author: '' });
+
+  const openQuoteEditor = () => {
+    setTempQuote({ text: coupleQuote?.text || '', author: coupleQuote?.author || '' });
+    setEditingQuote(true);
+  };
+
+  const saveQuote = () => {
+    if (!tempQuote.text.trim()) return;
+    const q = { text: tempQuote.text.trim(), author: tempQuote.author.trim() };
+    setCoupleQuote(q);
+    localStorage.setItem('memento_couple_quote', JSON.stringify(q));
+    setEditingQuote(false);
+  };
+
+  const clearQuote = () => {
+    setCoupleQuote(null);
+    localStorage.removeItem('memento_couple_quote');
+    setEditingQuote(false);
+  };
 
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedQuery(searchQuery), 300);
@@ -101,25 +115,139 @@ const MemoriesPage = () => {
           </div>
         </div>
 
-        {/* Partner blessing banner */}
-        {partnerJoined && (
-          <section className="relative overflow-hidden rounded-2xl border border-[#C96B60]/15 dark:border-[#BF8F8F]/10 bg-gradient-to-br from-[#FFF0EC]/70 dark:from-[#591F12]/40 to-transparent p-5 text-center shadow-sm">
-            <div className="flex justify-center mb-3 text-lg animate-pulse">✨ 👑 ✨</div>
-            <div className="space-y-3 font-serif text-[#1A2B48] dark:text-[#D9C1BF] leading-relaxed text-sm">
-              <p className="font-semibold px-2">
-                ዘመናችንን ሙሉ ለእግዚአብሔር ቤት እርሱን ደስ በሚያሰኝ አኗኗር እንድንኖር ያድርገን ::ቅዱስ ገብርኤል ከፈተና ይጠብቀን::
+        {/* ── Couple quote / blessing banner ── */}
+        {coupleQuote ? (
+          /* ─ FILLED STATE ─ */
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="group relative overflow-hidden rounded-2xl border border-[#C96B60]/15 dark:border-[#BF8F8F]/10 bg-gradient-to-br from-[#FFF8F6] via-white to-[#FFF0EC] dark:from-[#591F12]/40 dark:via-[#40110D] dark:to-[#40110D]/60 shadow-sm"
+          >
+            {/* decorative corner petals */}
+            <span className="absolute top-3 left-4 text-[#C96B60]/15 dark:text-[#BF8F8F]/10 text-4xl select-none pointer-events-none" aria-hidden="true">❝</span>
+            <span className="absolute bottom-3 right-4 text-[#C96B60]/15 dark:text-[#BF8F8F]/10 text-4xl select-none pointer-events-none" aria-hidden="true">❞</span>
+
+            <div className="px-8 py-7 text-center space-y-4">
+              <p className="font-serif text-base md:text-lg leading-relaxed text-[#1A2B48] dark:text-[#D9C1BF] whitespace-pre-wrap px-4">
+                {coupleQuote.text}
               </p>
-              <div className="flex items-center justify-center gap-2 py-1">
-                <div className="h-px w-10 bg-[#C96B60]/20 dark:bg-[#BF8F8F]/15" />
-                <span className="text-[#C96B60]/60 dark:text-[#BF8F8F]/40 text-xs">❦</span>
-                <div className="h-px w-10 bg-[#C96B60]/20 dark:bg-[#BF8F8F]/15" />
+
+              <div className="flex items-center justify-center gap-3">
+                <div className="h-px w-10 bg-gradient-to-r from-transparent to-[#C96B60]/30 dark:to-[#BF8F8F]/20" />
+                <span className="text-[#C96B60]/50 dark:text-[#BF8F8F]/35 text-sm">❦</span>
+                <div className="h-px w-10 bg-gradient-to-l from-transparent to-[#C96B60]/30 dark:to-[#BF8F8F]/20" />
               </div>
-              <p className="font-semibold px-2">
-                {"\"እመ አምላክ እመ ህይወት — ለቤታችን አክሊል ትሁነን\""}
-              </p>
+
+              {coupleQuote.author && (
+                <p className="font-serif italic text-sm text-[#1A2B48]/45 dark:text-[#8C5D5D]">
+                  — {coupleQuote.author}
+                </p>
+              )}
             </div>
-          </section>
+
+            {/* edit button — appears on hover */}
+            <button
+              onClick={openQuoteEditor}
+              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-[#291008]/80 backdrop-blur-sm border border-[#C96B60]/20 dark:border-[#BF8F8F]/15 text-[10px] text-[#C96B60] dark:text-[#BF8F8F] font-medium shadow-sm hover:bg-white dark:hover:bg-[#291008] transition-colors"
+            >
+              <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Edit
+            </button>
+          </motion.section>
+        ) : (
+          /* ─ EMPTY STATE ─ */
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="rounded-2xl border-2 border-dashed border-[#C96B60]/20 dark:border-[#BF8F8F]/15 bg-white/40 dark:bg-[#40110D]/30 py-7 px-6 text-center"
+          >
+            <div className="text-2xl mb-2">🌸</div>
+            <p className="font-serif italic text-sm text-[#1A2B48]/50 dark:text-[#8C5D5D] mb-4 leading-relaxed">
+              Add a quote, blessing, or wish to your memories page
+            </p>
+            <button
+              onClick={openQuoteEditor}
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#C96B60] dark:bg-[#8E5B60] text-white text-xs font-semibold hover:bg-[#B05A50] dark:hover:bg-[#BF8F8F]/80 transition-colors shadow-sm"
+            >
+              <span className="text-sm leading-none">+</span> Add Quote or Blessing
+            </button>
+          </motion.section>
         )}
+
+        {/* ── Quote editor modal ── */}
+        <AnimatePresence>
+          {editingQuote && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setEditingQuote(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.97 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+                className="w-full max-w-md bg-white dark:bg-[#291008] rounded-2xl shadow-2xl p-6 border border-black/5 dark:border-[#D9C1BF]/8"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF]">Our Quote or Blessing</h3>
+                  <button onClick={() => setEditingQuote(false)} className="text-[#1A2B48]/35 dark:text-[#8C5D5D] hover:text-[#C96B60] transition-colors text-xl leading-none">✕</button>
+                </div>
+                <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] mb-4">
+                  A verse, blessing, poem line, or any words meaningful to you as a couple
+                </p>
+
+                <label className="block text-xs font-semibold text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-1.5">
+                  Quote / Blessing *
+                </label>
+                <textarea
+                  rows={5}
+                  value={tempQuote.text}
+                  onChange={e => setTempQuote(q => ({ ...q, text: e.target.value }))}
+                  placeholder="e.g. "Love bears all things, believes all things, hopes all things…""
+                  className="w-full rounded-xl border border-black/10 dark:border-[#D9C1BF]/15 bg-[#FFF8F6] dark:bg-[#40110D]/50 px-4 py-3 text-sm text-[#1A2B48] dark:text-[#D9C1BF] placeholder-[#1A2B48]/30 dark:placeholder-[#8C5D5D] focus:outline-none focus:ring-2 focus:ring-[#C96B60]/30 resize-none font-serif leading-relaxed"
+                />
+
+                <label className="block text-xs font-semibold text-[#1A2B48]/60 dark:text-[#BF8F8F] mt-4 mb-1.5">
+                  Attribution <span className="font-normal text-[#1A2B48]/35 dark:text-[#8C5D5D]">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={tempQuote.author}
+                  onChange={e => setTempQuote(q => ({ ...q, author: e.target.value }))}
+                  placeholder="e.g. 1 Corinthians 13:7, or the author's name"
+                  className="w-full rounded-xl border border-black/10 dark:border-[#D9C1BF]/15 bg-[#FFF8F6] dark:bg-[#40110D]/50 px-4 py-2.5 text-sm text-[#1A2B48] dark:text-[#D9C1BF] placeholder-[#1A2B48]/30 dark:placeholder-[#8C5D5D] focus:outline-none focus:ring-2 focus:ring-[#C96B60]/30"
+                />
+
+                <div className="flex gap-2 mt-5">
+                  <button
+                    onClick={saveQuote}
+                    disabled={!tempQuote.text.trim()}
+                    className="flex-1 py-2.5 rounded-xl bg-[#C96B60] dark:bg-[#8E5B60] text-white font-semibold text-sm hover:bg-[#B05A50] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Save
+                  </button>
+                  {coupleQuote && (
+                    <button
+                      onClick={clearQuote}
+                      className="px-4 py-2.5 rounded-xl border border-red-300 dark:border-red-800/50 text-red-500 text-sm hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Error */}
         {error && (
