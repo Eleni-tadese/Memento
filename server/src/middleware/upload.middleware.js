@@ -69,7 +69,26 @@ const uploadAvatar = (req, res, next) => {
   })
 }
 
+// Message media upload (images, videos, audio, files — 100 MB limit)
+const messageFileUpload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+}).single('file')
+
+const uploadMessageFile = (req, res, next) => {
+  messageFileUpload(req, res, (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({ message: `Upload error: ${err.message}` })
+      }
+      return res.status(400).json({ message: err.message })
+    }
+    next()
+  })
+}
+
 module.exports = {
   uploadMemory,
   uploadAvatar,
+  uploadMessageFile,
 }

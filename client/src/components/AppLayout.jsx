@@ -210,6 +210,23 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
   /* close mobile sidebar on route change */
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
 
+  /* ── unread message count (driven by Letters.jsx via custom event) ── */
+  const [unreadMsgs, setUnreadMsgs] = useState(() =>
+    parseInt(localStorage.getItem('memento_unread_msgs') || '0', 10)
+  );
+  useEffect(() => {
+    const handler = (e) => setUnreadMsgs(e.detail ?? 0);
+    window.addEventListener('memento:unread', handler);
+    // also sync if another tab updated localStorage
+    const storageHandler = () =>
+      setUnreadMsgs(parseInt(localStorage.getItem('memento_unread_msgs') || '0', 10));
+    window.addEventListener('storage', storageHandler);
+    return () => {
+      window.removeEventListener('memento:unread', handler);
+      window.removeEventListener('storage', storageHandler);
+    };
+  }, []);
+
   /* close avatar dropdown on outside click */
   const avatarRef = useRef(null);
   useEffect(() => {
@@ -443,12 +460,20 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
               <SearchIcon className="h-4 w-4" />
             </button>
 
-            {/* Notifications */}
-            <button className="relative p-2 rounded-xl hover:bg-black/6 dark:hover:bg-white/6 transition-colors
-              text-[#1A2B48]/45 dark:text-[#BF8F8F]/50">
+            {/* Notifications — links to /letters, shows unread count */}
+            <Link to="/letters"
+              className="relative p-2 rounded-xl hover:bg-black/6 dark:hover:bg-white/6 transition-colors
+                text-[#1A2B48]/45 dark:text-[#BF8F8F]/50">
               <BellSVG cls="h-4 w-4" />
-              <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#C96B60]" />
-            </button>
+              {unreadMsgs > 0 ? (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-0.5 rounded-full
+                  bg-[#C96B60] text-white text-[9px] font-bold flex items-center justify-center leading-none animate-pulse">
+                  {unreadMsgs > 9 ? '9+' : unreadMsgs}
+                </span>
+              ) : (
+                <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#C96B60]/40" />
+              )}
+            </Link>
 
             {/* Theme toggle (top-nav shortcut) */}
             <button

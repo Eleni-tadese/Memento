@@ -35,6 +35,9 @@ app.use('/api/public', publicRoutes)
 const profileRoutes = require('./src/routes/profile.routes')
 app.use('/api/profile', profileRoutes)
 
+const messageRoutes = require('./src/routes/message.routes')
+app.use('/api/messages', messageRoutes)
+
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

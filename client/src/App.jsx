@@ -17,6 +17,8 @@ import UploadMemory from './pages/UploadMemory'
 import EditMemory from './pages/EditMemory'
 import MemoryDetail from './pages/MemoryDetail'
 import Profile from './pages/Profile'
+import Timeline from './pages/Timeline'
+import Letters from './pages/Letters'
 
 export default function App() {
   return (
@@ -44,6 +46,8 @@ export default function App() {
                 <Route path="/memories/:id/edit" element={<EditMemory />} />
                 <Route path="/memories/:id" element={<MemoryDetail />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/timeline" element={<Timeline />} />
+                <Route path="/letters" element={<Letters />} />
               </Route>
             </Routes>
           </ToastProvider>
