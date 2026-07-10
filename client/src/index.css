@@ -1,0 +1,314 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent-neutral: #6b7280;
+  --pink: #BF8F8F;
+  --ink: #40110D;
+  --panel: #591F12;
+  --border: #D9C1BF;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-[#B0C3D4] text-gray-900 font-sans antialiased transition-colors duration-300;
+  overflow-x: hidden;
+}
+
+.dark body {
+  background-color: #40110D;
+  background-image: radial-gradient(ellipse at 50% 30%, #591F12 0%, #40110D 45%, #2A0808 100%);
+  min-height: 100vh;
+}
+
+@layer components {
+  .memento-card {
+    @apply rounded-xl bg-white border border-gray-200 backdrop-blur-sm dark:bg-[#591F12]/75 dark:border-[#D9C1BF]/15;
+  }
+
+  .memento-input {
+    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:outline-none focus:ring-2 dark:border-[#D9C1BF]/20 dark:bg-[#40110D] dark:text-[#D9C1BF] dark:placeholder-[#8C5D5D];
+  }
+
+  .memento-input:focus {
+    border-color: rgb(201 107 96 / 0.4);
+    --tw-ring-color: rgb(201 107 96 / 0.2);
+  }
+
+  .dark .memento-input:focus {
+    border-color: rgb(217 193 191 / 0.5);
+    --tw-ring-color: rgb(217 193 191 / 0.15);
+  }
+
+  .memento-btn-primary {
+    @apply rounded-md px-6 py-3 font-semibold text-white transition-all dark:text-[#D9C1BF];
+    background-color: #C96B60;
+  }
+
+  .memento-btn-primary:hover {
+    background-color: #B05A50;
+  }
+
+  .dark .memento-btn-primary {
+    background-color: #591F12;
+  }
+
+  .dark .memento-btn-primary:hover {
+    background-color: #8C5D5D;
+  }
+
+  .memento-btn {
+    @apply rounded-xl px-5 py-2.5 font-semibold transition-all duration-300;
+    border: 1px solid rgba(201, 107, 96, 0.25);
+    background-color: rgba(201, 107, 96, 0.10);
+    color: #C96B60;
+  }
+  .memento-btn:hover {
+    background-color: rgba(201, 107, 96, 0.20);
+  }
+  .dark .memento-btn {
+    border-color: rgba(191, 143, 143, 0.20);
+    background-color: rgba(142, 91, 96, 0.20);
+    color: #BF8F8F;
+  }
+  .dark .memento-btn:hover {
+    background-color: rgba(142, 91, 96, 0.35);
+  }
+
+  .memento-btn-outline {
+    @apply rounded-xl px-5 py-2.5 font-semibold transition-all duration-300;
+    border: 1px solid rgba(201, 107, 96, 0.30);
+    color: #C96B60;
+  }
+  .memento-btn-outline:hover {
+    background-color: rgba(201, 107, 96, 0.08);
+  }
+  .dark .memento-btn-outline {
+    border-color: rgba(191, 143, 143, 0.20);
+    color: #BF8F8F;
+  }
+  .dark .memento-btn-outline:hover {
+    background-color: rgba(142, 91, 96, 0.20);
+  }
+
+  .section-label {
+    @apply font-sans text-[0.7rem] tracking-[0.5em] text-[#8C5D5D] uppercase opacity-80;
+  }
+
+  .font-display {
+    font-family: 'Cinzel Decorative', serif;
+  }
+
+  .font-serif {
+    font-family: 'Cormorant Garamond', serif;
+  }
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.petal {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  background: radial-gradient(ellipse, var(--rose) 30%, transparent 100%);
+  border-radius: 50% 50% 50% 0;
+  opacity: 0;
+  animation: fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.star-dot {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle linear infinite;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+@keyframes petalFall {
+  0% {
+    transform: translateY(-5vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  8% { opacity: 0.9; }
+  92% { opacity: 0.5; }
+  100% {
+    transform: translateY(108vh) translateX(80px) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+.petal {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  animation: petalFall linear infinite;
+  opacity: 0;
+  font-size: 16px;
+  user-select: none;
+}
+
+.dark .text-memoir-gold {
+  color: #D9C1BF;
+}
+
+.dark .text-memento-green,
+.dark .text-memento-navy {
+  color: #D9C1BF;
+}
+
+.dark .bg-memento-green {
+  background-color: #591F12;
+}
+
+.dark .hover\:bg-\[\#245a42\]:hover,
+.dark .hover\:bg-memento-green\/90:hover {
+  background-color: #8C5D5D;
+}
+
+.dark .bg-white,
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: rgba(89, 31, 18, 0.75) !important;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: rgba(217, 193, 191, 0.15) !important;
+}
+
+.dark .text-slate-400 {
+  color: #BF8F8F !important;
+}
+
+.dark .text-slate-500 {
+  color: #8C5D5D !important;
+}
+
+.dark .bg-\[\#1A1A2E\],
+.dark .bg-\[\#16213E\] {
+  background-color: rgba(89, 31, 18, 0.75) !important;
+}
+
+.dark .border-\[\#2D2D4E\] {
+  border-color: rgba(217, 193, 191, 0.15) !important;
+}
+
+.text-memoir-gold {
+  color: #6b7280;
+}
+
+.dark .memoir-card {
+  background: rgba(89, 31, 18, 0.65);
+  border: 1px solid rgba(217, 193, 191, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.memoir-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.dark .gold-divider {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.gold-divider {
+  border-color: rgba(107, 114, 128, 0.2);
+}
+
+.serif-heading {
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: 0.02em;
+}
+
+.tracking-label {
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Cinematic Ken Burns — 4 pan directions ── */
+@keyframes kenBurnsA {
+  from { transform: scale(1.12) translate(-2%, -1%); }
+  to   { transform: scale(1.0)  translate(0.5%, 0.4%); }
+}
+@keyframes kenBurnsB {
+  from { transform: scale(1.12) translate(2%, -1%); }
+  to   { transform: scale(1.0)  translate(-0.5%, 0.4%); }
+}
+@keyframes kenBurnsC {
+  from { transform: scale(1.12) translate(-1%, 1.5%); }
+  to   { transform: scale(1.0)  translate(0.4%, -0.5%); }
+}
+@keyframes kenBurnsD {
+  from { transform: scale(1.12) translate(1.5%, 1%); }
+  to   { transform: scale(1.0)  translate(-0.4%, -0.4%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.hero-text-enter {
+  animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-text-enter-delay {
+  animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.hero-text-enter-delay2 {
+  animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}

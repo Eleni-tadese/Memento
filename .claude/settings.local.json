@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(unzip -p Memento_Agent_Context.docx word/document.xml)",
+      "Read(//tmp/**)",
+      "Bash(node -e \"require\\('./src/routes/public.routes'\\); require\\('./src/controllers/public.controller'\\); console.log\\('server modules OK'\\);\")"
+    ]
+  }
+}
