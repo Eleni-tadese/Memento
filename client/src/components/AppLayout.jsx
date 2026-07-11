@@ -362,7 +362,7 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
 
   /* ─────────────────────────────────────────── RENDER ─────── */
   return (
-    <div className="relative flex min-h-screen bg-[#B0C3D4] dark:bg-[#40110D] text-[#1A2B48] dark:text-[#D9C1BF] font-sans">
+    <div className="relative flex min-h-screen bg-[#FDF0EE] dark:bg-[#40110D] text-[#1A2B48] dark:text-[#D9C1BF] font-sans">
       <StarsBackground />
       <PetalEffect />
 

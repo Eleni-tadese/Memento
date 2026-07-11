@@ -87,10 +87,10 @@ const CARD_STYLES = [
     barColor: 'bg-[#C96B60]',
   },
   {
-    wrapper: 'bg-white border-[#8BA3B8]/30',
-    iconBg: 'bg-[#B0C3D4]/40 text-[#1A2B48]',
+    wrapper: 'bg-white border-[#E8BFB6]/30',
+    iconBg: 'bg-[#FDF0EE]/40 text-[#1A2B48]',
     titleColor: 'text-[#1A2B48]',
-    barColor: 'bg-[#8BA3B8]',
+    barColor: 'bg-[#E8BFB6]',
   },
   {
     wrapper: 'bg-white border-[#C96B60]/20',
@@ -99,10 +99,10 @@ const CARD_STYLES = [
     barColor: 'bg-[#E8907A]',
   },
   {
-    wrapper: 'bg-white border-[#8BA3B8]/30',
-    iconBg: 'bg-[#B0C3D4]/40 text-[#1A2B48]',
+    wrapper: 'bg-white border-[#E8BFB6]/30',
+    iconBg: 'bg-[#FDF0EE]/40 text-[#1A2B48]',
     titleColor: 'text-[#1A2B48]',
-    barColor: 'bg-[#B0C3D4]',
+    barColor: 'bg-[#FDF0EE]',
   },
   {
     wrapper: 'bg-white border-[#C96B60]/20',
@@ -111,10 +111,10 @@ const CARD_STYLES = [
     barColor: 'bg-[#C96B60]',
   },
   {
-    wrapper: 'bg-white border-[#8BA3B8]/30',
-    iconBg: 'bg-[#B0C3D4]/40 text-[#1A2B48]',
+    wrapper: 'bg-white border-[#E8BFB6]/30',
+    iconBg: 'bg-[#FDF0EE]/40 text-[#1A2B48]',
     titleColor: 'text-[#1A2B48]',
-    barColor: 'bg-[#8BA3B8]',
+    barColor: 'bg-[#E8BFB6]',
   },
 ];
 

@@ -15,7 +15,7 @@ html {
 }
 
 body {
-  @apply bg-[#B0C3D4] text-gray-900 font-sans antialiased transition-colors duration-300;
+  @apply bg-[#FDF0EE] text-gray-900 font-sans antialiased transition-colors duration-300;
   overflow-x: hidden;
 }
 

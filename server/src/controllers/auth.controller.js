@@ -99,8 +99,10 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" })
     }
 
-    // Update last_login_at
-    await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id])
+    // Update last_login_at — graceful fallback if column doesn't exist yet
+    try {
+      await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id])
+    } catch (_) { /* column may not exist — non-fatal */ }
 
     // Find relationship
     const relationshipResult = await pool.query(

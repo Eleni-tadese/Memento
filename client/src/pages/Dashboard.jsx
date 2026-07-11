@@ -221,6 +221,18 @@ const Dashboard = () => {
   const [editingPhoto, setEditingPhoto] = useState(null);
   const [photoInput, setPhotoInput] = useState('');
 
+  // ── Invite link copy state ────────────────────────────────────────────────
+  const [linkCopied, setLinkCopied] = useState(false);
+  const handleCopyInvite = () => {
+    if (!inviteData?.inviteUrl) return;
+    // Replace the server's CLIENT_URL host with the actual current frontend host
+    const url = inviteData.inviteUrl.replace(/^https?:\/\/[^/]+/, window.location.origin);
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2500);
+    });
+  };
+
   // ── Special date / countdown ───────────────────────────────────────────────
   const [specialDate, setSpecialDate] = useState(() => localStorage.getItem('memento_special_date') || '');
   const [editingDate, setEditingDate] = useState(false);
@@ -401,39 +413,121 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* ── "No images" CTA — only when loading is done & picker not open ── */}
+        {/* ── Empty hero — welcome screen (no partner) or photo CTA ── */}
         {!loadingData && heroImages.length === 0 && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 max-w-sm text-center shadow-2xl"
-            >
-              <div className="text-4xl mb-3">🌸</div>
-              <h3 className="font-serif text-2xl text-white mb-2">Set Your Hero Photos</h3>
-              <p className="text-white/60 text-sm mb-6 leading-relaxed">
-                {allPhotos.length > 0
-                  ? 'Choose your favorite memories to display in this cinematic slideshow'
-                  : 'Upload memories with photos and they will appear here'
-                }
-              </p>
-              {allPhotos.length > 0 ? (
-                <button
-                  onClick={() => setShowHeroPicker(true)}
-                  className="px-7 py-3 rounded-xl bg-white text-[#C96B60] font-semibold text-sm hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg"
+
+            {/* ── NO PARTNER YET → full onboarding welcome ── */}
+            {inviteData?.partnerJoined === false ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+                className="w-full max-w-md text-center"
+              >
+                {/* Heading */}
+                <p className="hero-text-enter text-xs tracking-[0.5em] uppercase text-white/50 mb-4 font-sans">
+                  Welcome to Memento
+                </p>
+                <h1 className="hero-text-enter-delay font-serif text-4xl md:text-5xl font-bold text-white drop-shadow-2xl mb-2">
+                  Hi, {user?.display_name?.split(' ')[0] || 'there'} 💕
+                </h1>
+                <p className="hero-text-enter-delay2 text-white/60 text-sm mb-8 font-serif italic">
+                  Invite your partner to start your shared space
+                </p>
+
+                {/* Invite link card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="bg-white/15 backdrop-blur-md rounded-2xl border border-white/20 p-5 shadow-2xl mb-6"
                 >
-                  Select Your Best Photos
-                </button>
-              ) : (
+                  <p className="text-xs font-semibold text-[#C96B60] dark:text-[#D9C1BF] mb-3 text-left">
+                    💌 Partner Invite Link
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 rounded-xl bg-black/20 px-3 py-2 text-[11px] text-white/70 truncate font-mono">
+                      {inviteData?.inviteUrl
+                        ? inviteData.inviteUrl.replace(/^https?:\/\/[^/]+/, window.location.origin)
+                        : `${window.location.origin}/join/…`}
+                    </div>
+                    <button
+                      onClick={handleCopyInvite}
+                      className={`shrink-0 rounded-xl px-4 py-2 text-xs font-semibold shadow transition-all duration-200 ${
+                        linkCopied
+                          ? 'bg-green-400 text-white'
+                          : 'bg-[#C96B60] hover:bg-[#B05A50] text-white active:scale-95'
+                      }`}
+                    >
+                      {linkCopied ? '✓ Copied!' : 'Copy'}
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* You / Partner status */}
+                <div className="flex items-center justify-center gap-6">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="h-14 w-14 rounded-full bg-[#C96B60]/30 border-2 border-[#C96B60] flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                      {user?.display_name?.[0]?.toUpperCase() || 'Y'}
+                    </div>
+                    <span className="text-[10px] text-white/70">{user?.display_name?.split(' ')[0] || 'You'}</span>
+                    <span className="text-[9px] text-emerald-300">Joined ✓</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="h-4 w-8 rounded-full bg-[#C96B60] animate-pulse" />
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="h-14 w-14 rounded-full border-2 border-dashed border-white/40 flex items-center justify-center text-[11px] text-white/50">
+                      Partner
+                    </div>
+                    <span className="text-[10px] text-white/50">Waiting…</span>
+                    <span className="text-[9px] text-white/30">Pending</span>
+                  </div>
+                </div>
+
+                {/* Skip — add first memory */}
                 <Link
                   to="/memories/new"
-                  className="inline-block px-7 py-3 rounded-xl bg-white text-[#C96B60] font-semibold text-sm hover:bg-white/90 transition-all duration-200 shadow-lg"
+                  className="mt-8 inline-block text-xs text-white/40 hover:text-white/70 transition-colors underline underline-offset-2"
                 >
-                  + Add Your First Memory
+                  Skip for now — add your first memory →
                 </Link>
-              )}
-            </motion.div>
+              </motion.div>
+
+            ) : (
+              /* ── PARTNER JOINED but no photos yet ── */
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 max-w-sm text-center shadow-2xl"
+              >
+                <div className="text-4xl mb-3">🌸</div>
+                <h3 className="font-serif text-2xl text-white mb-2">Set Your Hero Photos</h3>
+                <p className="text-white/60 text-sm mb-6 leading-relaxed">
+                  {allPhotos.length > 0
+                    ? 'Choose your favorite memories to display in this cinematic slideshow'
+                    : 'Upload memories with photos and they will appear here'}
+                </p>
+                {allPhotos.length > 0 ? (
+                  <button
+                    onClick={() => setShowHeroPicker(true)}
+                    className="px-7 py-3 rounded-xl bg-white text-[#C96B60] font-semibold text-sm hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg"
+                  >
+                    Select Your Best Photos
+                  </button>
+                ) : (
+                  <Link
+                    to="/memories/new"
+                    className="inline-block px-7 py-3 rounded-xl bg-white text-[#C96B60] font-semibold text-sm hover:bg-white/90 transition-all duration-200 shadow-lg"
+                  >
+                    + Add Your First Memory
+                  </Link>
+                )}
+              </motion.div>
+            )}
+
           </div>
         )}
 
@@ -541,34 +635,67 @@ const Dashboard = () => {
 
             {/* ─ Partner 2 ─ */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative group">
-                <div className="w-36 h-40 md:w-44 md:h-52 rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-[#591F12]">
-                  {couplePhotos.partner ? (
-                    <img
-                      src={couplePhotos.partner}
-                      alt="Partner"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#BF8F8F]/25 to-[#C96B60]/15 dark:from-[#8C5D5D]/40 dark:to-[#591F12] flex items-center justify-center">
-                      <span className="text-5xl text-white/40">?</span>
-                    </div>
-                  )}
+              {inviteData?.partnerJoined === false ? (
+                /* ── Partner hasn't joined yet → show invite card ── */
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-36 h-40 md:w-44 md:h-52 rounded-3xl border-4 border-dashed border-[#C96B60]/30 dark:border-[#BF8F8F]/20 bg-gradient-to-br from-[#C96B60]/8 dark:from-[#8C5D5D]/20 dark:to-[#591F12]/30 flex flex-col items-center justify-center gap-2 text-center px-3">
+                    <span className="text-3xl">💌</span>
+                    <p className="text-[10px] font-medium text-[#C96B60]/80 dark:text-[#BF8F8F]/70 leading-tight">
+                      Waiting for<br />your partner
+                    </p>
+                  </div>
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full bg-[#BF8F8F]/60 dark:bg-[#8C5D5D]/60 text-white text-[11px] font-medium shadow-lg whitespace-nowrap relative">
+                    Invite Pending
+                  </div>
+
+                  {/* Copy invite link button */}
+                  <button
+                    onClick={handleCopyInvite}
+                    className={`mt-5 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold shadow transition-all duration-200 ${
+                      linkCopied
+                        ? 'bg-green-500 text-white'
+                        : 'bg-[#C96B60] dark:bg-[#8E5B60] text-white hover:bg-[#B05A50] dark:hover:bg-[#7A4D50] active:scale-95'
+                    }`}
+                  >
+                    {linkCopied ? '✓ Copied!' : '🔗 Copy Invite Link'}
+                  </button>
+                  <p className="text-[9px] text-[#1A2B48]/35 dark:text-[#8C5D5D] text-center max-w-[140px] leading-tight">
+                    Share this link with your partner to invite them
+                  </p>
                 </div>
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full bg-[#BF8F8F] dark:bg-[#8C5D5D] text-white text-[11px] font-medium shadow-lg whitespace-nowrap">
-                  {partnerName.split(' ')[0]}
+              ) : (
+                /* ── Partner has joined → show their photo card ── */
+                <div className="relative group">
+                  <div className="w-36 h-40 md:w-44 md:h-52 rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-[#591F12]">
+                    {couplePhotos.partner ? (
+                      <img
+                        src={couplePhotos.partner}
+                        alt="Partner"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#BF8F8F]/25 to-[#C96B60]/15 dark:from-[#8C5D5D]/40 dark:to-[#591F12] flex items-center justify-center">
+                        <span className="text-5xl text-white/40">{partnerName[0]?.toUpperCase() || '?'}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full bg-[#BF8F8F] dark:bg-[#8C5D5D] text-white text-[11px] font-medium shadow-lg whitespace-nowrap">
+                    {partnerName.split(' ')[0]}
+                  </div>
+                  <button
+                    onClick={() => { setEditingPhoto('partner'); setPhotoInput(couplePhotos.partner || ''); }}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
+                    title="Change photo"
+                  >
+                    ✎
+                  </button>
                 </div>
-                <button
-                  onClick={() => { setEditingPhoto('partner'); setPhotoInput(couplePhotos.partner || ''); }}
-                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
-                  title="Change photo"
-                >
-                  ✎
-                </button>
-              </div>
-              <p className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF] mt-5">
-                {partnerName}
-              </p>
+              )}
+              {inviteData?.partnerJoined !== false && (
+                <p className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF] mt-5">
+                  {partnerName}
+                </p>
+              )}
             </div>
           </div>
         </div>

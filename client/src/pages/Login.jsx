@@ -43,7 +43,7 @@ const Login = () => {
 
   return (
     <main
-      className="relative min-h-screen flex items-center justify-center bg-[#B0C3D4] dark:bg-[#40110D] p-4"
+      className="relative min-h-screen flex items-center justify-center bg-[#FDF0EE] dark:bg-[#40110D] p-4"
       id="login-view"
     >
       <StarsBackground />

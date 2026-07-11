@@ -81,7 +81,7 @@ const TimelineEntry = ({ memory, isLeft, navigate }) => {
 
       {/* Centre dot */}
       <div className="flex flex-col items-center pt-5 shrink-0">
-        <div className="w-3.5 h-3.5 rounded-full bg-[#C96B60] dark:bg-[#BF8F8F] shadow-md ring-[3px] ring-[#B0C3D4] dark:ring-[#40110D] z-10" />
+        <div className="w-3.5 h-3.5 rounded-full bg-[#C96B60] dark:bg-[#BF8F8F] shadow-md ring-[3px] ring-[#FDF0EE] dark:ring-[#40110D] z-10" />
       </div>
 
       {/* RIGHT column */}

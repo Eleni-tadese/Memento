@@ -30,11 +30,15 @@ import {
 } from '../components/Icons';
 
 const IMG = {
-  heroMain: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=500&q=80',
-  heroArch: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=400&q=80',
-  heroInset: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=300&q=80',
-  wreathLeft: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80',
-  wreathRight: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=400&q=80',
+  // Hero collage — four couple photos
+  heroMain:     'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=700&q=85',
+  heroSecond:   'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=600&q=80',
+  heroThird:    'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?auto=format&fit=crop&w=400&q=80',
+  heroFourth:   'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=400&q=80',
+  // Intro three circle portraits
+  wreathLeft:   'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80',
+  wreathCenter: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=500&q=80',
+  wreathRight:  'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=400&q=80',
 };
 
 const STEPS = [
@@ -60,7 +64,7 @@ const SERVICES = [
     icon: CaptureIcon,
     title: 'Photo Gallery',
     desc: 'Upload unlimited photos organized beautifully by memory. Browse by album or date.',
-    image: 'https://images.unsplash.com/photo-1452457807411-4979b707c5be?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80',
   },
   {
     icon: VideoIcon,
@@ -76,9 +80,9 @@ const SERVICES = [
   },
   {
     icon: CalendarIcon,
-    title: 'Calendar',
+    title: 'Anniversaries',
     desc: 'Browse memories by date with a beautiful calendar. Never forget an anniversary.',
-    image: 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80',
   },
   {
     icon: SearchIcon,
@@ -95,17 +99,17 @@ const SERVICES = [
 ];
 
 const SHOWCASE = [
-  { title: 'Sunset Moments', tag: 'Photo Memories', image: 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?auto=format&fit=crop&w=500&q=80' },
-  { title: 'Adventure Days', tag: 'Timeline Stories', image: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=500&q=80' },
-  { title: 'Date Nights', tag: 'Video Memories', image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0df?auto=format&fit=crop&w=500&q=80' },
-  { title: 'Love Letters', tag: 'Private Notes', image: 'https://images.unsplash.com/photo-1518199266791-5375a57590ae?auto=format&fit=crop&w=500&q=80' },
+  { title: 'Sunset Moments',  tag: 'Photo Memories',   image: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=500&q=80' },
+  { title: 'Adventure Days',  tag: 'Timeline Stories', image: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?auto=format&fit=crop&w=500&q=80' },
+  { title: 'Date Nights',     tag: 'Video Memories',   image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=500&q=80' },
+  { title: 'Love Letters',    tag: 'Private Notes',    image: 'https://images.unsplash.com/photo-1518199266791-5375a57590ae?auto=format&fit=crop&w=500&q=80' },
 ];
 
 const STATS = [
-  { value: '1,200+', label: 'Couple Spaces' },
-  { value: '850+', label: 'Memories Saved' },
-  { value: '750+', label: 'Photo Albums' },
-  { value: '500+', label: 'Love Stories' },
+  { value: '∞',    label: 'Unlimited Memories' },
+  { value: '100%', label: 'Private & Secure' },
+  { value: '2',    label: 'Exclusively Yours' },
+  { value: '♥',   label: 'Forever Preserved' },
 ];
 
 const NAV_LINKS = [
@@ -141,16 +145,17 @@ const FeatureImageCard = ({ icon: Icon, title, desc, image }) => (
 
 /* ─── step screen helpers ─── */
 const NavSidebar = ({ active }) => (
-  <div className="w-36 shrink-0 bg-white/30 dark:bg-[#8E5B60]/25 p-3 flex flex-col gap-1.5 border-r border-black/10 dark:border-[#BF8F8F]/20">
-    <div className="flex items-center gap-1.5 mb-3">
-      <FlowerIcon className="h-4 w-4 text-[#C96B60] dark:text-[#BF8F8F]" />
-      <span className="font-serif text-sm font-bold text-[#1A2B48] dark:text-[#D9C1BF]">Memento</span>
+  <div className="w-36 shrink-0 bg-white/60 p-3 flex flex-col gap-1 border-r border-black/8">
+    {/* Couple names header */}
+    <div className="flex items-center gap-1.5 mb-3 px-1">
+      <HeartIcon className="h-3.5 w-3.5 text-[#C96B60] fill-[#C96B60]" />
+      <span className="font-serif text-[11px] font-bold text-[#1A2B48]">Alex &amp; Sam</span>
     </div>
-    {['Dashboard', 'Memories', 'Timeline', 'Letters'].map((item, i) => (
+    {['Timeline', 'Gallery', 'Letters', 'Calendar'].map((item, i) => (
       <div
         key={item}
         className={`rounded-lg px-3 py-1.5 text-[11px] font-medium transition-colors ${
-          i === active ? 'bg-[#C96B60] text-white dark:bg-[#8E5B60]' : 'text-[#1A2B48]/50 dark:text-[#BF8F8F]/60'
+          i === active ? 'bg-[#C96B60] text-white' : 'text-[#1A2B48]/50'
         }`}
       >
         {item}
@@ -205,17 +210,18 @@ const LandingPage = () => {
   const howReveal      = useReveal();
   const servicesReveal = useReveal();
   const showcaseReveal = useReveal();
+  const ctaReveal      = useReveal();
 
   return (
-    <div id="top" className="relative min-h-screen overflow-hidden bg-[#B0C3D4] text-gray-900 transition-colors duration-300 dark:bg-[#40110D] dark:text-white">
+    <div id="top" className="relative min-h-screen overflow-hidden bg-[#FDF0EE] text-gray-900 transition-colors duration-300 dark:bg-[#40110D] dark:text-white">
       <StarsBackground />
       <PetalEffect />
 
       {/* NAVBAR */}
       <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? 'border-[#8BA3B8]/50 bg-[#B0C3D4]/95 shadow-md backdrop-blur-md dark:border-[#D9C1BF]/10 dark:bg-[#40110D]/95'
-          : 'border-[#8BA3B8]/30 bg-[#B0C3D4] dark:border-[#D9C1BF]/10 dark:bg-[#40110D]'
+          ? 'border-[#E8BFB6]/50 bg-[#FDF0EE]/95 shadow-md backdrop-blur-md dark:border-[#D9C1BF]/10 dark:bg-[#40110D]/95'
+          : 'border-[#E8BFB6]/30 bg-[#FDF0EE] dark:border-[#D9C1BF]/10 dark:bg-[#40110D]'
       }`}>
         <div className="relative mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">
           <Link to="/" className="z-10 flex items-center gap-2 font-serif text-2xl font-bold text-[#1A2B48] dark:text-[#D9C1BF]">
@@ -247,18 +253,20 @@ const LandingPage = () => {
       </header>
 
       {/* HERO */}
-      <section ref={heroReveal} className="reveal relative bg-[#B0C3D4] py-16 dark:bg-[#40110D] lg:py-24">
-        <div className="relative mx-auto max-w-7xl px-6">
-          <HeroFloralAccent className="absolute -left-4 top-8 h-20 w-20 opacity-40 lg:h-28 lg:w-28" />
-          <HeroFloralAccent className="absolute bottom-0 right-0 h-24 w-24 scale-x-[-1] opacity-30" />
+      <section ref={heroReveal} className="reveal relative bg-[#FDF0EE] py-14 dark:bg-[#40110D] lg:py-20">
+        <div className="relative mx-auto max-w-5xl px-6">
+          <HeroFloralAccent className="absolute -left-2 top-4 h-16 w-16 opacity-35 lg:h-24 lg:w-24" />
+          <HeroFloralAccent className="absolute bottom-0 right-0 h-20 w-20 scale-x-[-1] opacity-25" />
 
-          <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+
+            {/* ── LEFT: text ── */}
             <div className="space-y-6">
               <span className="font-serif text-sm italic text-[#C96B60] dark:text-[#BF8F8F]">Your private memory space</span>
-              <h1 className="font-serif text-4xl font-bold leading-[1.15] text-[#1A2B48] dark:text-[#D9C1BF] md:text-5xl lg:text-[3.5rem]">
+              <h1 className="font-serif text-4xl font-bold leading-[1.15] text-[#1A2B48] dark:text-[#D9C1BF] md:text-5xl lg:text-[3.25rem]">
                 Preserve Every<br />Moment You<br />Share Together
               </h1>
-              <p className="max-w-md text-sm leading-relaxed text-[#1A2B48]/70 dark:text-[#BF8F8F] md:text-base">
+              <p className="max-w-sm text-sm leading-relaxed text-[#1A2B48]/70 dark:text-[#BF8F8F] md:text-base">
                 Photos, videos, and stories — private, beautiful, forever yours.
               </p>
               <div className="flex flex-wrap items-center gap-4 pt-1">
@@ -269,7 +277,7 @@ const LandingPage = () => {
                 </button>
                 <button type="button" onClick={() => scrollToSection('how-it-works')}
                   className="group inline-flex items-center gap-3 text-sm font-semibold text-[#1A2B48] dark:text-[#D9C1BF]">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/40 shadow ring-1 ring-[#8BA3B8] transition-shadow group-hover:shadow-md dark:bg-[#591F12] dark:ring-[#D9C1BF]/20">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/60 shadow ring-1 ring-[#E8BFB6] transition-shadow group-hover:shadow-md dark:bg-[#591F12] dark:ring-[#D9C1BF]/20">
                     <PlayIcon className="h-6 w-6 text-[#C96B60] dark:text-[#D9C1BF]" />
                   </span>
                   See How It Works
@@ -282,47 +290,119 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="relative mx-auto h-[460px] w-full max-w-[500px] lg:mx-0 lg:ml-auto lg:h-[520px]">
-              <div className="absolute right-6 top-0 z-10 w-[55%] overflow-hidden rounded-md shadow-2xl">
-                <SafeImage src={IMG.heroMain} alt="Couple moment" className="h-[400px] w-full object-cover lg:h-[460px]" />
+            {/* ── RIGHT: 4-image collage ── */}
+            <div className="relative mx-auto h-[480px] w-full max-w-[420px] lg:mx-0 lg:h-[520px]">
+
+              {/* Image 1 — top-left small, rotated +3deg */}
+              <div className="absolute left-0 top-0 z-10 w-[42%] overflow-hidden rounded-2xl shadow-lg"
+                style={{ transform: 'rotate(3deg)' }}>
+                <SafeImage
+                  src={IMG.heroThird}
+                  alt="Couple adventure"
+                  className="h-[160px] w-full object-cover lg:h-[180px]"
+                />
+                <div className="absolute inset-0 rounded-2xl ring-1 ring-white/20" />
               </div>
-              <div className="absolute left-0 top-14 z-20 w-[40%] overflow-hidden rounded-t-[999px] shadow-xl">
-                <SafeImage src={IMG.heroArch} alt="Couple portrait" className="h-[280px] w-full object-cover lg:h-[320px]" />
+
+              {/* Image 2 — left-center large, rotated -4deg */}
+              <div className="absolute left-0 bottom-0 z-10 w-[50%] overflow-hidden rounded-3xl shadow-xl"
+                style={{ transform: 'rotate(-4deg)' }}>
+                <SafeImage
+                  src={IMG.heroSecond}
+                  alt="Couple memory"
+                  className="h-[270px] w-full object-cover lg:h-[300px]"
+                />
+                <div className="absolute inset-0 rounded-3xl ring-1 ring-white/25" />
               </div>
-              <div className="absolute right-0 top-6 z-30 w-[26%] overflow-hidden rounded-md shadow-lg">
-                <SafeImage src={IMG.heroInset} alt="Memory details" className="h-24 w-full object-cover lg:h-28" />
+
+              {/* Image 3 — right-center tall (main), front */}
+              <div className="absolute right-0 top-0 z-20 w-[58%] overflow-hidden rounded-3xl shadow-2xl">
+                <SafeImage
+                  src={IMG.heroMain}
+                  alt="Couple together"
+                  className="h-[340px] w-full object-cover lg:h-[380px]"
+                />
+                <div className="absolute inset-0 rounded-3xl ring-1 ring-white/20" />
               </div>
-              <HeroFloralAccent className="absolute -right-4 bottom-20 h-28 w-28 opacity-60" />
+
+              {/* Image 4 — bottom-right small, rotated -3deg */}
+              <div className="absolute right-2 bottom-0 z-20 w-[40%] overflow-hidden rounded-2xl shadow-lg"
+                style={{ transform: 'rotate(-3deg)' }}>
+                <SafeImage
+                  src={IMG.heroFourth}
+                  alt="Couple moments"
+                  className="h-[140px] w-full object-cover lg:h-[155px]"
+                />
+                <div className="absolute inset-0 rounded-2xl ring-1 ring-white/20" />
+              </div>
+
+              {/* Floating memory badge — centred at the overlap */}
+              <div className="absolute bottom-[148px] left-[44%] z-30 flex items-center gap-2 rounded-2xl bg-white/90 dark:bg-[#291008]/90 backdrop-blur-sm shadow-xl px-3 py-2 border border-white/60 dark:border-[#D9C1BF]/10">
+                <span className="text-base">💕</span>
+                <div className="leading-none">
+                  <p className="text-[10px] font-bold text-[#1A2B48] dark:text-[#D9C1BF]">Our Memories</p>
+                  <p className="text-[9px] text-[#C96B60] dark:text-[#BF8F8F] mt-0.5">Forever preserved</p>
+                </div>
+              </div>
+
+              {/* Decorative floral accent */}
+              <HeroFloralAccent className="absolute -right-2 top-[350px] h-18 w-18 opacity-40 dark:opacity-25" />
             </div>
+
           </div>
         </div>
       </section>
 
       {/* INTRO */}
-      <section id="about" ref={introReveal} className="reveal bg-[#98B1C4] py-20 dark:bg-[#8E5B60]/20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
-            <FloralWreath src={IMG.wreathLeft} alt="Couple portrait left" />
-            <div className="max-w-lg space-y-5 text-center">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C96B60] dark:text-[#D9C1BF]">Built for Couples</span>
-              <h2 className="font-serif text-3xl font-bold leading-snug text-[#1A2B48] dark:text-[#D9C1BF] md:text-4xl lg:text-[2.75rem]">
-                Unrivaled Privacy<br />Unforgettable Memories
-              </h2>
-              <p className="text-sm text-[#1A2B48]/70 dark:text-[#BF8F8F]">
-                Your own space — no followers, no algorithms.
-              </p>
-              <button type="button" onClick={() => scrollToSection('services')}
-                className="rounded-md bg-[#C96B60] px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-[#B05A50] dark:bg-[#591F12] dark:text-[#D9C1BF] dark:hover:bg-[#8C5D5D]">
-                See Features
-              </button>
+      <section id="about" ref={introReveal} className="reveal bg-[#F8E4DF] py-20 dark:bg-[#8E5B60]/20 lg:py-28">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+
+          {/* Three circle portraits */}
+          <div className="flex items-end justify-center gap-4 mb-12 md:gap-6">
+            {/* Left circle — slightly smaller */}
+            <div className="relative shrink-0">
+              <div className="h-28 w-28 md:h-36 md:w-36 overflow-hidden rounded-full border-4 border-white shadow-xl dark:border-[#591F12]">
+                <SafeImage src={IMG.wreathLeft} alt="Couple moment" className="h-full w-full object-cover" />
+              </div>
             </div>
-            <FloralWreath src={IMG.wreathRight} alt="Couple portrait right" />
+            {/* Center circle — largest */}
+            <div className="relative shrink-0 -mb-3">
+              <div className="h-36 w-36 md:h-48 md:w-48 overflow-hidden rounded-full border-4 border-white shadow-2xl dark:border-[#591F12] ring-4 ring-[#C96B60]/20">
+                <SafeImage src={IMG.wreathCenter} alt="Couple together" className="h-full w-full object-cover" />
+              </div>
+            </div>
+            {/* Right circle — slightly smaller */}
+            <div className="relative shrink-0">
+              <div className="h-28 w-28 md:h-36 md:w-36 overflow-hidden rounded-full border-4 border-white shadow-xl dark:border-[#591F12]">
+                <SafeImage src={IMG.wreathRight} alt="Couple memory" className="h-full w-full object-cover" />
+              </div>
+            </div>
           </div>
+
+          {/* Decorative label with lines */}
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="h-px w-12 bg-[#C96B60]/40 dark:bg-[#BF8F8F]/30" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#C96B60] dark:text-[#BF8F8F]">Built for Couples</span>
+            <div className="h-px w-12 bg-[#C96B60]/40 dark:bg-[#BF8F8F]/30" />
+          </div>
+
+          {/* Big heading */}
+          <h2 className="font-serif text-3xl font-bold leading-snug text-[#1A2B48] dark:text-[#D9C1BF] md:text-4xl lg:text-[2.6rem] mb-5">
+            Not another cluttered photo app.<br className="hidden md:block" />
+            A quiet, private world for the story<br className="hidden md:block" />
+            only the two of you are living.
+          </h2>
+
+          <p className="mx-auto max-w-md text-sm leading-relaxed text-[#1A2B48]/60 dark:text-[#BF8F8F]">
+            Every feature is designed around a partnership — shared spaces,
+            gentle reminders of the days that mattered, and room for the words
+            you never want to forget.
+          </p>
         </div>
       </section>
 
       {/* STATS */}
-      <section ref={statsReveal} className="reveal border-y border-[#8BA3B8]/40 bg-white py-8 dark:border-[#D9C1BF]/10 dark:bg-[#40110D] lg:py-12">
+      <section ref={statsReveal} className="reveal border-y border-[#E8BFB6]/50 bg-white py-8 dark:border-[#D9C1BF]/10 dark:bg-[#40110D] lg:py-12">
         <div className="mx-auto flex max-w-6xl items-center justify-center px-6">
           <LeafBracket className="hidden h-28 w-14 shrink-0 md:block" />
           <div className="grid flex-1 grid-cols-2 md:grid-cols-4">
@@ -334,67 +414,27 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* HOW IT WORKS — interactive video player */}
-      <section id="how-it-works" ref={howReveal} className="reveal bg-[#B0C3D4] py-20 dark:bg-[#40110D] lg:py-28">
-        <div className="mx-auto max-w-5xl space-y-10 px-6">
-          <div className="mx-auto max-w-3xl space-y-3 text-center">
-            <h2 className="font-serif text-3xl font-bold text-[#1A2B48] dark:text-[#D9C1BF] md:text-4xl lg:text-5xl">
-              How Memento Works
-            </h2>
-            <p className="text-sm text-[#1A2B48]/70 dark:text-[#BF8F8F] md:text-base">
-              Click any step — or watch it guide you automatically
-            </p>
-          </div>
+      {/* HOW IT WORKS — two-column: mockup left · steps right */}
+      <section id="how-it-works" ref={howReveal} className="reveal bg-[#F8E4DF] dark:bg-[#3D0E0A] py-20 lg:py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
 
-          {/* Step selector tabs */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {STEPS.map((step, idx) => {
-              const StepIcon = step.icon;
-              const isActive = activeStep === idx;
-              return (
-                <button key={step.title} type="button" onClick={() => jumpStep(idx)}
-                  className={`rounded-2xl p-4 text-left transition-all duration-300 ${
-                    isActive
-                      ? 'bg-white shadow-lg dark:bg-[#8E5B60]/40'
-                      : 'bg-[#98B1C4]/50 hover:bg-[#98B1C4] dark:bg-[#8E5B60]/15 dark:hover:bg-[#8E5B60]/25'
-                  }`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                      isActive ? 'bg-[#C96B60] text-white' : 'bg-white/50 text-[#1A2B48]/50 dark:bg-[#BF8F8F]/20 dark:text-[#BF8F8F]/60'
-                    }`}>{idx + 1}</span>
-                    <span className={`text-sm font-semibold ${isActive ? 'text-[#1A2B48] dark:text-[#D9C1BF]' : 'text-[#1A2B48]/50 dark:text-[#D9C1BF]/40'}`}>
-                      {step.title}
-                    </span>
-                  </div>
-                  <p className={`mb-3 text-xs leading-relaxed ${isActive ? 'text-[#1A2B48]/70 dark:text-[#D9C1BF]' : 'text-[#1A2B48]/40 dark:text-[#BF8F8F]/50'}`}>
-                    {step.desc}
-                  </p>
-                  {/* progress bar */}
-                  <div className="h-1 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
-                    <div className="h-full rounded-full bg-[#C96B60] dark:bg-[#8C5D5D]"
-                      style={{ width: isActive ? `${stepProgress}%` : '0%', transition: 'width 80ms linear' }} />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* App / browser frame */}
-          <div className="overflow-hidden rounded-2xl shadow-2xl border border-[#8BA3B8]/30 dark:border-[#D9C1BF]/10">
-            {/* Browser chrome bar */}
-            <div className="flex items-center gap-2 bg-[#8BA3B8] px-4 py-3 dark:bg-[#8E5B60]">
-              <span className="h-3 w-3 rounded-full bg-rose-400/80" />
-              <span className="h-3 w-3 rounded-full bg-amber-400/80" />
-              <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
-              <div className="mx-3 flex flex-1 items-center gap-2 rounded-full bg-white/20 px-3 py-1">
-                <LockIcon className="h-3 w-3 text-white/70" />
-                <span className="text-[11px] text-white/80">app.memento.love</span>
+            {/* ── LEFT: interactive browser mockup ── */}
+            <div className="overflow-hidden rounded-2xl shadow-2xl border border-[#E8BFB6]/60 dark:border-white/10">
+              {/* Browser chrome */}
+              <div className="flex items-center gap-2 bg-[#E8BFB6] dark:bg-[#591F12] px-4 py-3">
+                <span className="h-3 w-3 rounded-full bg-rose-400/80" />
+                <span className="h-3 w-3 rounded-full bg-amber-400/80" />
+                <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
+                <div className="mx-3 flex flex-1 items-center gap-2 rounded-full bg-[#1A2B48]/10 dark:bg-white/10 px-3 py-1">
+                  <LockIcon className="h-3 w-3 text-[#1A2B48]/40 dark:text-white/50" />
+                  <span className="text-[11px] text-[#1A2B48]/50 dark:text-white/60">memento.app / our space</span>
+                </div>
+                <SparklesIcon className="h-4 w-4 text-[#1A2B48]/30 dark:text-white/40" />
               </div>
-              <SparklesIcon className="h-4 w-4 text-white/60" />
-            </div>
 
             {/* App screen area */}
-            <div className="relative bg-[#C8D7E4] dark:bg-[#591F12]/40" style={{ minHeight: '340px' }}>
+              <div className="relative bg-[#FDF0EE]" style={{ minHeight: '340px' }}>
 
               {/* ── STEP 0: Create Your Space ── */}
               <div className={`absolute inset-0 flex ${activeStep === 0 ? 'opacity-100 translate-x-0 duration-500 delay-150 transition-all' : 'opacity-0 translate-x-8 duration-200 delay-0 transition-all pointer-events-none'}`}>
@@ -407,7 +447,7 @@ const LandingPage = () => {
                   <div className="w-full max-w-xs rounded-xl border border-[#C96B60]/30 bg-white dark:bg-[#8E5B60]/30 p-3 shadow-md">
                     <p className="text-[10px] font-semibold text-[#C96B60] dark:text-[#D9C1BF] mb-2">Partner Invite Link</p>
                     <div className="flex gap-1 items-center">
-                      <div className="flex-1 rounded bg-[#B0C3D4]/30 dark:bg-[#40110D]/60 px-2 py-1 text-[9px] text-gray-500 dark:text-[#BF8F8F] truncate font-mono">
+                      <div className="flex-1 rounded bg-[#FDF0EE]/30 dark:bg-[#40110D]/60 px-2 py-1 text-[9px] text-gray-500 dark:text-[#BF8F8F] truncate font-mono">
                         memento.app/join/♥-abc123
                       </div>
                       <span className="rounded bg-[#C96B60] px-2 py-1 text-[9px] text-white font-semibold">Copy</span>
@@ -420,7 +460,7 @@ const LandingPage = () => {
                     </div>
                     <HeartIcon className="h-6 w-6 text-[#C96B60] animate-pulse" />
                     <div className="flex flex-col items-center gap-1">
-                      <div className="h-12 w-12 rounded-full border-2 border-dashed border-[#8BA3B8] flex items-center justify-center text-[9px] text-[#8BA3B8] dark:text-[#BF8F8F]">Partner</div>
+                      <div className="h-12 w-12 rounded-full border-2 border-dashed border-[#E8BFB6] flex items-center justify-center text-[9px] text-[#E8BFB6] dark:text-[#BF8F8F]">Partner</div>
                       <span className="text-[9px] text-[#1A2B48]/40 dark:text-[#8C5D5D]">Pending…</span>
                     </div>
                   </div>
@@ -463,40 +503,96 @@ const LandingPage = () => {
 
               {/* ── STEP 2: Relive Together ── */}
               <div className={`absolute inset-0 flex ${activeStep === 2 ? 'opacity-100 translate-x-0 duration-500 delay-150 transition-all' : 'opacity-0 translate-x-8 duration-200 delay-0 transition-all pointer-events-none'}`}>
-                <NavSidebar active={1} />
+                <NavSidebar active={0} />
                 <div className="flex-1 p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-serif text-base font-bold text-[#1A2B48] dark:text-[#D9C1BF]">Your Memories</h3>
-                    <div className="flex items-center gap-1 text-[10px] text-[#C96B60] dark:text-[#BF8F8F]">
-                      <HeartIcon className="h-3 w-3" /> 42 memories
+                    <h3 className="font-serif text-sm font-bold text-[#1A2B48]">Your Timeline</h3>
+                    <div className="flex items-center gap-1 text-[9px] text-[#C96B60]">
+                      <HeartIcon className="h-3 w-3 fill-[#C96B60]" /> 42 memories
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
+                  {/* Three couple photo thumbnails — mirrors image 3 */}
+                  <div className="grid grid-cols-3 gap-2 mb-3">
                     {[
-                      { bg: 'bg-rose-200 dark:bg-rose-900/40',    label: 'First Date',   emoji: '🌹' },
-                      { bg: 'bg-sky-200 dark:bg-sky-900/40',      label: 'Beach Day',    emoji: '🌊' },
-                      { bg: 'bg-amber-200 dark:bg-amber-900/40',  label: 'Anniversary',  emoji: '🕯️' },
-                      { bg: 'bg-emerald-200 dark:bg-emerald-900/40', label: 'Road Trip', emoji: '🗺️' },
-                      { bg: 'bg-purple-200 dark:bg-purple-900/40',label: 'Movie Night',  emoji: '🍿' },
-                      { bg: 'bg-pink-200 dark:bg-pink-900/40',    label: 'Surprise!',    emoji: '🎁' },
-                    ].map(({ bg, label, emoji }) => (
-                      <div key={label} className={`rounded-xl overflow-hidden ${bg} h-[70px] flex flex-col`}>
-                        <div className="flex-1 flex items-center justify-center text-lg">{emoji}</div>
-                        <div className="px-1.5 py-1 bg-white/50 dark:bg-black/20 text-[8px] font-semibold text-gray-700 dark:text-[#D9C1BF] truncate">{label}</div>
+                      'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?auto=format&fit=crop&w=300&q=80',
+                      'https://images.unsplash.com/photo-1511285560929-80b456fea0df?auto=format&fit=crop&w=300&q=80',
+                      'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=300&q=80',
+                    ].map((src, i) => (
+                      <div key={i} className="rounded-xl overflow-hidden h-[85px] bg-[#E8BFB6]/30">
+                        <SafeImage src={src} alt="" className="w-full h-full object-cover" />
                       </div>
                     ))}
+                  </div>
+                  {/* Placeholder text bars */}
+                  <div className="space-y-1.5 px-0.5">
+                    <div className="h-2 rounded-full bg-[#C96B60]/40 w-2/3" />
+                    <div className="h-1.5 rounded-full bg-[#1A2B48]/10 w-full" />
+                    <div className="h-1.5 rounded-full bg-[#1A2B48]/10 w-5/6" />
+                    <div className="h-1.5 rounded-full bg-[#1A2B48]/10 w-4/5" />
                   </div>
                 </div>
               </div>
 
             </div>
+            </div>{/* end browser mockup */}
+
+            {/* ── RIGHT: heading + vertical steps ── */}
+            <div className="space-y-8">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#C96B60]">How Memento Works</span>
+                <h2 className="mt-3 font-serif text-3xl font-bold leading-snug text-[#1A2B48] dark:text-white md:text-4xl lg:text-[2.5rem]">
+                  Three simple steps to a<br />lifetime of memories
+                </h2>
+              </div>
+
+              <div className="space-y-6">
+                {STEPS.map((step, idx) => {
+                  const isActive = activeStep === idx;
+                  return (
+                    <button
+                      key={step.title}
+                      type="button"
+                      onClick={() => jumpStep(idx)}
+                      className={`w-full text-left flex gap-4 rounded-2xl p-4 transition-all duration-300 ${
+                        isActive
+                          ? 'bg-white/80 dark:bg-white/10 border border-[#C96B60]/20 dark:border-white/15 shadow-sm'
+                          : 'hover:bg-white/40 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+                        isActive
+                          ? 'bg-[#C96B60] text-white'
+                          : 'border border-[#1A2B48]/20 dark:border-white/20 text-[#1A2B48]/40 dark:text-white/40'
+                      }`}>{idx + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-semibold mb-1 ${
+                          isActive ? 'text-[#1A2B48] dark:text-white' : 'text-[#1A2B48]/40 dark:text-white/50'
+                        }`}>
+                          {step.title}
+                        </p>
+                        <p className={`text-xs leading-relaxed mb-3 ${
+                          isActive ? 'text-[#1A2B48]/60 dark:text-white/70' : 'text-[#1A2B48]/25 dark:text-white/30'
+                        }`}>
+                          {step.desc}
+                        </p>
+                        <div className="h-0.5 w-full overflow-hidden rounded-full bg-[#1A2B48]/10 dark:bg-white/10">
+                          <div className="h-full rounded-full bg-[#C96B60]"
+                            style={{ width: isActive ? `${stepProgress}%` : '0%', transition: 'width 80ms linear' }} />
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* SERVICES — image grid */}
-      <section id="services" ref={servicesReveal} className="reveal bg-[#98B1C4] py-20 dark:bg-[#8E5B60]/20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-6">
+      <section id="services" ref={servicesReveal} className="reveal bg-[#F8E4DF] py-20 dark:bg-[#8E5B60]/20 lg:py-28">
+        <div className="mx-auto max-w-5xl px-6">
           <div className="mb-14 text-center">
             <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#C96B60] dark:text-[#BF8F8F]">
               Features
@@ -523,8 +619,8 @@ const LandingPage = () => {
       </section>
 
       {/* SHOWCASE */}
-      <section id="showcase" ref={showcaseReveal} className="reveal bg-[#C8D7E4] py-20 dark:bg-[#40110D] lg:py-28">
-        <div className="mx-auto max-w-7xl px-6">
+      <section id="showcase" ref={showcaseReveal} className="reveal bg-[#F5E2DB] py-20 dark:bg-[#40110D] lg:py-28">
+        <div className="mx-auto max-w-5xl px-6">
           <div className="mb-14 text-center">
             <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#C96B60] dark:text-[#BF8F8F]">
               Your Gallery
@@ -544,9 +640,49 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-[#8BA3B8]/50 bg-[#8BA3B8] py-4 dark:border-[#D9C1BF]/10 dark:bg-[#40110D]">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3 px-6 text-sm text-white/70 dark:text-[#8C5D5D]">
+      {/* CTA — Start preserving your story */}
+      <section ref={ctaReveal} className="reveal bg-[#FDF0EE] py-20 dark:bg-[#40110D] lg:py-28">
+        <div className="mx-auto max-w-2xl px-6 text-center">
+          {/* Sparkle icon */}
+          <div className="mb-6 flex justify-center">
+            <SparklesIcon className="h-8 w-8 text-[#C96B60]/60 dark:text-[#BF8F8F]/50" />
+          </div>
+          <h2 className="font-serif text-3xl font-bold leading-snug text-[#40110D] dark:text-[#D9C1BF] md:text-4xl lg:text-[2.5rem] mb-4">
+            Start preserving your story today
+          </h2>
+          <p className="mx-auto max-w-sm text-sm leading-relaxed text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-10">
+            Create your private space and gather everything that makes<br className="hidden md:block" />
+            the two of you, you.
+          </p>
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+            <button type="button" onClick={() => navigate('/signup')}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#40110D] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#591F12] dark:bg-[#591F12] dark:hover:bg-[#8E5B60]">
+              Start your space
+              <ArrowForwardIcon className="h-4 w-4" />
+            </button>
+            <button type="button" onClick={() => scrollToSection('services')}
+              className="rounded-xl border border-[#C96B60]/40 px-8 py-3.5 text-sm font-semibold text-[#C96B60] transition-all hover:bg-[#C96B60]/8 dark:border-[#BF8F8F]/30 dark:text-[#BF8F8F]">
+              Explore features
+            </button>
+          </div>
+          {/* Trust badges */}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-[#1A2B48]/45 dark:text-[#8C5D5D]">
+            <span className="flex items-center gap-1.5">
+              <span className="text-[#C96B60]">✓</span> Private by design
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-[#C96B60]">✓</span> Free to start
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-[#C96B60]">✓</span> For two, forever
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-[#E8BFB6]/50 bg-[#F8E4DF] py-4 dark:border-[#D9C1BF]/10 dark:bg-[#40110D]">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-3 px-6 text-sm text-[#1A2B48]/50 dark:text-[#8C5D5D]">
           <p className="inline-flex items-center gap-1">
             © 2026 Memento · Made with
             <HeartIcon className="h-3.5 w-3.5 text-white dark:text-[#BF8F8F]" />
