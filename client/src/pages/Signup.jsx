@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { signup as apiSignup } from '../api/auth';
-import ThemeToggle from '../components/ThemeToggle';
-import BackButton from '../components/BackButton';
 import StarsBackground from '../components/StarsBackground';
 import PetalEffect from '../components/PetalEffect';
+import AuthPageHeader from '../components/AuthPageHeader';
 import { EyeIcon, EyeOffIcon, FlowerIcon } from '../components/Icons';
 
 const Signup = () => {
@@ -52,7 +51,7 @@ const Signup = () => {
 
   return (
     <main
-      className="relative min-h-screen flex items-center justify-center bg-[#FDF0EE] dark:bg-[#40110D] p-4"
+      className="relative flex min-h-screen items-center justify-center bg-[#FDF6F0] pt-[68px] p-4 dark:bg-[#2A1218]"
       id="signup-view"
     >
       <StarsBackground />
@@ -60,21 +59,20 @@ const Signup = () => {
 
       {/* Soft glow orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/3 right-1/4 h-72 w-72 rounded-full bg-[#C96B60]/8 dark:bg-[#8E5B60]/12 blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 h-56 w-56 rounded-full bg-[#7AAEC8]/10 dark:bg-[#591F12]/25 blur-2xl" />
+        <div className="absolute top-1/3 right-1/4 h-72 w-72 rounded-full bg-[#5C1A28]/8 dark:bg-[#5A2532]/12 blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 h-56 w-56 rounded-full bg-[#7AAEC8]/10 dark:bg-[#5A2532]/25 blur-2xl" />
       </div>
 
-      <div className="fixed top-4 left-4 z-50"><BackButton to="/" /></div>
-      <div className="fixed top-4 right-4 z-50"><ThemeToggle /></div>
+      <AuthPageHeader />
 
       <div className="relative z-10 w-full max-w-md">
         {/* Card */}
-        <div className="rounded-2xl border border-white/50 dark:border-[#D9C1BF]/10 bg-white/70 dark:bg-[#591F12]/60 backdrop-blur-md shadow-2xl p-8">
+        <div className="rounded-2xl border border-white/50 dark:border-[#CBA24A]/10 bg-white/70 dark:bg-[#5A2532]/60 backdrop-blur-md shadow-2xl p-8">
           {/* Brand */}
           <div className="text-center mb-8">
             <div className="mb-3 flex items-center justify-center gap-2">
-              <FlowerIcon className="h-8 w-8 text-[#C96B60] dark:text-[#BF8F8F]" />
-              <h1 className="font-serif text-4xl font-bold text-[#C96B60] dark:text-[#D9C1BF]">Memento</h1>
+              <FlowerIcon className="h-8 w-8 text-[#5C1A28] dark:text-[#BF8F8F]" />
+              <h1 className="font-serif text-4xl font-bold text-[#5C1A28] dark:text-[#D9C1BF]">Memento</h1>
             </div>
             <p className="text-sm text-[#1A2B48]/60 dark:text-[#BF8F8F]">Create your private shared space</p>
           </div>
@@ -137,7 +135,7 @@ const Signup = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2 text-[#1A2B48]/40 dark:text-[#8C5D5D] hover:text-[#C96B60] dark:hover:text-[#BF8F8F] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2 text-[#1A2B48]/40 dark:text-[#CBA24A]/70 hover:text-[#B8863E] dark:hover:text-[#BF8F8F] transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
@@ -166,15 +164,15 @@ const Signup = () => {
             )}
           </form>
 
-          <div className="mt-7 text-center text-sm text-[#1A2B48]/50 dark:text-[#8C5D5D]">
+          <div className="mt-7 text-center text-sm text-[#1A2B48]/50 dark:text-[#CBA24A]/70">
             Already have an account?{' '}
-            <Link to="/login" className="font-medium text-[#C96B60] dark:text-[#BF8F8F] hover:underline transition-colors">
+            <Link to="/login" className="font-medium text-[#5C1A28] dark:text-[#BF8F8F] hover:underline transition-colors">
               Login
             </Link>
           </div>
         </div>
 
-        <p className="text-center mt-4 text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] font-serif italic">
+        <p className="text-center mt-4 text-xs text-[#1A2B48]/40 dark:text-[#CBA24A]/70 font-serif italic">
           Private memories, shared love ❤
         </p>
       </div>

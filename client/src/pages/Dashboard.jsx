@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+﻿import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { getInviteLink } from '../api/auth';
@@ -6,6 +6,9 @@ import { getMemories } from '../api/memories';
 import { Link, useNavigate } from 'react-router-dom';
 import AppLayout from '../components/AppLayout';
 import { getAllPhotos } from '../api/memories';
+import FavoriteRounded from '@mui/icons-material/FavoriteRounded';
+import MailOutlineRounded from '@mui/icons-material/MailOutlineRounded';
+import PhotoLibraryRounded from '@mui/icons-material/PhotoLibraryRounded';
 
 // ─── Ken Burns animation cycle (4 directions) ────────────────────────────────
 const KB_ANIMS = ['kenBurnsA', 'kenBurnsB', 'kenBurnsC', 'kenBurnsD'];
@@ -60,7 +63,7 @@ const CountdownTimer = ({ targetDate }) => {
         <span className="text-6xl md:text-8xl font-serif font-bold text-[#BF8F8F] dark:text-[#D9C1BF] tabular-nums drop-shadow-lg">
           {time.days}
         </span>
-        <p className="mt-2 font-serif italic text-white/60">days together 🌹</p>
+        <p className="mt-2 font-serif italic text-white/60">days together</p>
       </div>
     );
   }
@@ -247,8 +250,8 @@ const Dashboard = () => {
   useEffect(() => {
     Promise.all([
       getInviteLink().catch(() => null),
-      getMemories({ limit: 30 }).catch(() => ({ memories: [] })),
-      getAllPhotos().catch(() => ({ photos: [] })),
+      getMemories({ limit: 30 }).catch(() => null),
+      getAllPhotos().catch(() => null),
     ]).then(([inv, mem, ph]) => {
       setInviteData(inv);
       const mems = mem?.memories || [];
@@ -266,7 +269,12 @@ const Dashboard = () => {
       ]);
 
       setHeroImages(prev => {
-        if (prev.length === 0) return [];
+        if (prev.length === 0) return prev;
+        // Only prune the saved selection when we actually have a valid photo
+        // set to compare against. If the fetch failed or returned nothing
+        // (e.g. a Neon cold start), keep the user's saved photos untouched
+        // so their "Select Your Best Photos" choice never silently disappears.
+        if (validUrls.size === 0) return prev;
         const valid = prev.filter(h => validUrls.has(h.url));
         if (valid.length !== prev.length) {
           localStorage.setItem('memento_hero_images', JSON.stringify(valid));
@@ -353,7 +361,7 @@ const Dashboard = () => {
       {/* ══════════════════════════════════════════════════════════════════════
           SECTION 1 — CINEMATIC HERO SLIDER
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full h-[80vh] min-h-[560px] overflow-hidden bg-[#160606]">
+      <section className="relative w-full h-[80vh] min-h-[560px] overflow-hidden bg-[#FFF1F3]">
 
         {/* ── Slide images with Ken Burns crossfade ── */}
         <AnimatePresence mode="sync">
@@ -379,12 +387,19 @@ const Dashboard = () => {
             /* ── No images selected → gradient fallback ── */
             <motion.div
               key="no-image-bg"
-              className="absolute inset-0 bg-gradient-to-br from-[#40110D] via-[#591F12] to-[#8E5B60]/60"
+              className="absolute inset-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
+              <img
+                src="/couple_background.png"
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ filter: 'brightness(0.62) saturate(1.15)' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/55" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#E85D75]/25 to-transparent" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -430,7 +445,7 @@ const Dashboard = () => {
                   Welcome to Memento
                 </p>
                 <h1 className="hero-text-enter-delay font-serif text-4xl md:text-5xl font-bold text-white drop-shadow-2xl mb-2">
-                  Hi, {user?.display_name?.split(' ')[0] || 'there'} 💕
+                  Hi, {user?.display_name?.split(' ')[0] || 'there'}
                 </h1>
                 <p className="hero-text-enter-delay2 text-white/60 text-sm mb-8 font-serif italic">
                   Invite your partner to start your shared space
@@ -444,7 +459,7 @@ const Dashboard = () => {
                   className="bg-white/15 backdrop-blur-md rounded-2xl border border-white/20 p-5 shadow-2xl mb-6"
                 >
                   <p className="text-xs font-semibold text-[#C96B60] dark:text-[#D9C1BF] mb-3 text-left">
-                    💌 Partner Invite Link
+                    Partner Invite Link
                   </p>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 rounded-xl bg-black/20 px-3 py-2 text-[11px] text-white/70 truncate font-mono">
@@ -503,7 +518,7 @@ const Dashboard = () => {
                 transition={{ duration: 0.6, ease: 'easeOut' }}
                 className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 max-w-sm text-center shadow-2xl"
               >
-                <div className="text-4xl mb-3">🌸</div>
+                <div className="mb-3 flex justify-center"><PhotoLibraryRounded style={{ fontSize: 40 }} className="text-white/90" /></div>
                 <h3 className="font-serif text-2xl text-white mb-2">Set Your Hero Photos</h3>
                 <p className="text-white/60 text-sm mb-6 leading-relaxed">
                   {allPhotos.length > 0
@@ -583,7 +598,7 @@ const Dashboard = () => {
       ══════════════════════════════════════════════════════════════════════ */}
       <section
         ref={coupleRef}
-        className={`py-20 px-6 bg-[#FFF8F6] dark:bg-[#591F12]/20 transition-all duration-700 ease-out ${
+        className={`py-20 px-6 bg-[#FFF1F3] dark:bg-[#591F12]/20 transition-all duration-700 ease-out ${
           coupleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
@@ -605,7 +620,7 @@ const Dashboard = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#C96B60]/25 to-[#7AAEC8]/15 dark:from-[#8E5B60]/50 dark:to-[#591F12] flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-[#C96B60]/25 to-[#F7CAD0]/15 dark:from-[#8E5B60]/50 dark:to-[#591F12] flex items-center justify-center">
                       <span className="text-5xl text-white/40">{user?.display_name?.[0]?.toUpperCase() || '?'}</span>
                     </div>
                   )}
@@ -621,7 +636,7 @@ const Dashboard = () => {
                   ✎
                 </button>
               </div>
-              <p className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF] mt-5">
+              <p className="font-serif text-lg text-[#352F36] dark:text-[#D9C1BF] mt-5">
                 {user?.display_name || 'You'}
               </p>
             </div>
@@ -629,7 +644,7 @@ const Dashboard = () => {
             {/* ─ Divider ─ */}
             <div className="flex flex-col items-center gap-3 text-[#C96B60] dark:text-[#BF8F8F] mt-2">
               <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#C96B60]/30 to-transparent dark:via-[#BF8F8F]/20" />
-              <span className="text-3xl drop-shadow">❤</span>
+              <span className="drop-shadow"><FavoriteRounded style={{ fontSize: 30 }} /></span>
               <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#C96B60]/30 to-transparent dark:via-[#BF8F8F]/20" />
             </div>
 
@@ -639,7 +654,7 @@ const Dashboard = () => {
                 /* ── Partner hasn't joined yet → show invite card ── */
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-36 h-40 md:w-44 md:h-52 rounded-3xl border-4 border-dashed border-[#C96B60]/30 dark:border-[#BF8F8F]/20 bg-gradient-to-br from-[#C96B60]/8 dark:from-[#8C5D5D]/20 dark:to-[#591F12]/30 flex flex-col items-center justify-center gap-2 text-center px-3">
-                    <span className="text-3xl">💌</span>
+                    <span><MailOutlineRounded style={{ fontSize: 30 }} className="text-[#C44569]" /></span>
                     <p className="text-[10px] font-medium text-[#C96B60]/80 dark:text-[#BF8F8F]/70 leading-tight">
                       Waiting for<br />your partner
                     </p>
@@ -657,9 +672,9 @@ const Dashboard = () => {
                         : 'bg-[#C96B60] dark:bg-[#8E5B60] text-white hover:bg-[#B05A50] dark:hover:bg-[#7A4D50] active:scale-95'
                     }`}
                   >
-                    {linkCopied ? '✓ Copied!' : '🔗 Copy Invite Link'}
+                    {linkCopied ? '✓ Copied!' : 'Copy Invite Link'}
                   </button>
-                  <p className="text-[9px] text-[#1A2B48]/35 dark:text-[#8C5D5D] text-center max-w-[140px] leading-tight">
+                  <p className="text-[9px] text-[#352F36]/35 dark:text-[#8C5D5D] text-center max-w-[140px] leading-tight">
                     Share this link with your partner to invite them
                   </p>
                 </div>
@@ -692,7 +707,7 @@ const Dashboard = () => {
                 </div>
               )}
               {inviteData?.partnerJoined !== false && (
-                <p className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF] mt-5">
+                <p className="font-serif text-lg text-[#352F36] dark:text-[#D9C1BF] mt-5">
                   {partnerName}
                 </p>
               )}
@@ -714,7 +729,7 @@ const Dashboard = () => {
           <p className="text-center text-[10px] tracking-[0.55em] uppercase text-[#C96B60]/50 dark:text-[#BF8F8F]/40 mb-2 font-sans">
             Our Journey
           </p>
-          <h2 className="text-center font-serif text-3xl md:text-4xl text-[#1A2B48] dark:text-[#D9C1BF] mb-14">
+          <h2 className="text-center font-serif text-3xl md:text-4xl text-[#352F36] dark:text-[#D9C1BF] mb-14">
             Recent Memories
           </h2>
 
@@ -727,7 +742,7 @@ const Dashboard = () => {
             </div>
           ) : recentMems.length === 0 ? (
             <div className="text-center py-12">
-              <p className="font-serif italic text-[#1A2B48]/40 dark:text-[#8C5D5D] mb-4">
+              <p className="font-serif italic text-[#352F36]/40 dark:text-[#8C5D5D] mb-4">
                 No memories yet — add your first moment together!
               </p>
               <Link to="/memories/new"
@@ -749,7 +764,7 @@ const Dashboard = () => {
                       className={`flex items-center gap-4 md:gap-6 cursor-pointer group ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
                     >
                       <div className={`w-24 md:w-32 shrink-0 ${isLeft ? 'text-right' : 'text-left'}`}>
-                        <p className="font-serif italic text-base md:text-lg text-[#1A2B48]/25 dark:text-[#8C5D5D]/60 leading-snug">
+                        <p className="font-serif italic text-base md:text-lg text-[#352F36]/25 dark:text-[#8C5D5D]/60 leading-snug">
                           {fmtDate(memory.memory_date) || '—'}
                         </p>
                       </div>
@@ -759,7 +774,7 @@ const Dashboard = () => {
                       <div className={`flex-1 flex items-center gap-4 rounded-2xl shadow-md border transition-all duration-500 ease-out p-4 group-hover:-translate-y-1 group-hover:shadow-xl ${
                         isHighlight
                           ? 'bg-[#C96B60] dark:bg-[#8E5B60] border-transparent'
-                          : 'bg-[#FDF6F4] dark:bg-[#591F12]/50 border-[#C96B60]/8 dark:border-[#D9C1BF]/8 group-hover:border-[#C96B60]/25'
+                          : 'bg-[#FFF1F3] dark:bg-[#591F12]/50 border-[#C96B60]/8 dark:border-[#D9C1BF]/8 group-hover:border-[#C96B60]/25'
                       } ${isLeft ? '' : 'flex-row-reverse'}`}>
                         {memory.cover_image && (
                           <div className="w-14 h-14 shrink-0 rounded-full overflow-hidden border-2 border-white/70 dark:border-[#D9C1BF]/20 shadow-md group-hover:scale-105 transition-transform duration-500">
@@ -768,20 +783,20 @@ const Dashboard = () => {
                         )}
                         <div className="flex-1 min-w-0">
                           <h3 className={`font-serif font-semibold text-base truncate ${
-                            isHighlight ? 'text-white' : 'text-[#1A2B48] dark:text-[#D9C1BF]'
+                            isHighlight ? 'text-white' : 'text-[#352F36] dark:text-[#D9C1BF]'
                           }`}>
                             {memory.title}
                           </h3>
                           {memory.location && (
                             <p className={`text-xs mt-0.5 truncate ${
-                              isHighlight ? 'text-white/70' : 'text-[#1A2B48]/45 dark:text-[#8C5D5D]'
+                              isHighlight ? 'text-white/70' : 'text-[#352F36]/45 dark:text-[#8C5D5D]'
                             }`}>
-                              📍 {memory.location}
+                              {memory.location}
                             </p>
                           )}
                           {!memory.cover_image && (
                             <p className={`text-xs mt-0.5 ${
-                              isHighlight ? 'text-white/60' : 'text-[#1A2B48]/30 dark:text-[#8C5D5D]'
+                              isHighlight ? 'text-white/60' : 'text-[#352F36]/30 dark:text-[#8C5D5D]'
                             }`}>
                               {fmtDate(memory.memory_date)}
                             </p>
@@ -811,7 +826,7 @@ const Dashboard = () => {
       ══════════════════════════════════════════════════════════════════════ */}
       <section
         ref={countdownRef}
-        className={`py-20 px-6 bg-gradient-to-br from-[#FFF0EC] via-[#FFF8F6] to-[#EEF5FB] dark:from-[#591F12]/50 dark:via-[#40110D] dark:to-[#2A0808] transition-all duration-800 ease-out delay-150 ${
+        className={`py-20 px-6 bg-gradient-to-br from-[#FFF1F3] via-[#FFF1F3] to-[#FFF8F8] dark:from-[#591F12]/50 dark:via-[#40110D] dark:to-[#2A0808] transition-all duration-800 ease-out delay-150 ${
           countdownVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
@@ -822,7 +837,7 @@ const Dashboard = () => {
                 Counting Down To
               </p>
               <CountdownTimer targetDate={specialDate} />
-              <p className="mt-6 font-serif italic text-sm text-[#1A2B48]/40 dark:text-[#8C5D5D]">
+              <p className="mt-6 font-serif italic text-sm text-[#352F36]/40 dark:text-[#8C5D5D]">
                 {new Date(specialDate + 'T00:00:00').toLocaleDateString('en-US', {
                   weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
                 })}
@@ -839,7 +854,7 @@ const Dashboard = () => {
               <p className="text-[10px] tracking-[0.55em] uppercase text-[#C96B60]/50 dark:text-[#BF8F8F]/40 mb-4 font-sans">
                 Special Date
               </p>
-              <p className="font-serif italic text-[#1A2B48]/40 dark:text-[#8C5D5D] mb-6 text-sm">
+              <p className="font-serif italic text-[#352F36]/40 dark:text-[#8C5D5D] mb-6 text-sm">
                 Set a date to count down to — your anniversary, wedding, or any special moment
               </p>
               <button
@@ -878,10 +893,10 @@ const Dashboard = () => {
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-1">
-                <h3 className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF]">Choose Hero Photos</h3>
-                <button onClick={() => setShowHeroPicker(false)} className="text-[#1A2B48]/40 dark:text-[#8C5D5D] hover:text-[#C96B60] text-lg">✕</button>
+                <h3 className="font-serif text-lg text-[#352F36] dark:text-[#D9C1BF]">Choose Hero Photos</h3>
+                <button onClick={() => setShowHeroPicker(false)} className="text-[#352F36]/40 dark:text-[#8C5D5D] hover:text-[#C96B60] text-lg">✕</button>
               </div>
-              <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] mb-5">
+              <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D] mb-5">
                 Select up to 6 · {heroImages.length}/6 chosen · Shows ALL photos from all your memories
               </p>
 
@@ -894,7 +909,7 @@ const Dashboard = () => {
                 </div>
               ) : allPhotos.length === 0 ? (
                 <div className="text-center py-10">
-                  <p className="font-serif italic text-[#1A2B48]/40 dark:text-[#8C5D5D] text-sm">Add memories with photos first!</p>
+                  <p className="font-serif italic text-[#352F36]/40 dark:text-[#8C5D5D] text-sm">Add memories with photos first!</p>
                   <Link to="/memories/new" onClick={() => setShowHeroPicker(false)}
                     className="mt-3 inline-block text-xs text-[#C96B60] dark:text-[#BF8F8F] hover:underline">
                     + Add a memory
@@ -975,13 +990,13 @@ const Dashboard = () => {
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF]">
+                <h3 className="font-serif text-lg text-[#352F36] dark:text-[#D9C1BF]">
                   {editingPhoto === 'mine' ? 'Your' : "Partner's"} Profile Photo
                 </h3>
-                <button onClick={() => setEditingPhoto(null)} className="text-[#1A2B48]/40 dark:text-[#8C5D5D] text-lg">✕</button>
+                <button onClick={() => setEditingPhoto(null)} className="text-[#352F36]/40 dark:text-[#8C5D5D] text-lg">✕</button>
               </div>
 
-              <label className="block text-sm text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-1.5">Photo URL</label>
+              <label className="block text-sm text-[#352F36]/60 dark:text-[#BF8F8F] mb-1.5">Photo URL</label>
               <input
                 type="url"
                 value={photoInput}
@@ -992,7 +1007,7 @@ const Dashboard = () => {
 
             {allPhotos.length > 0 && (
               <>
-                <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] mb-2">Pick from your memories ({allPhotos.length} photos):</p>
+                <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D] mb-2">Pick from your memories ({allPhotos.length} photos):</p>
                 <div className="grid grid-cols-4 gap-2 max-h-36 overflow-y-auto mb-4">
                   {allPhotos.map((photo, i) => (
                     <div
@@ -1051,10 +1066,10 @@ const Dashboard = () => {
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-1">
-                <h3 className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF]">Set Special Date</h3>
-                <button onClick={() => setEditingDate(false)} className="text-[#1A2B48]/40 dark:text-[#8C5D5D] text-lg">✕</button>
+                <h3 className="font-serif text-lg text-[#352F36] dark:text-[#D9C1BF]">Set Special Date</h3>
+                <button onClick={() => setEditingDate(false)} className="text-[#352F36]/40 dark:text-[#8C5D5D] text-lg">✕</button>
               </div>
-              <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] mb-4">
+              <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D] mb-4">
                 Past date = shows days together · Future date = counts down
               </p>
               <input

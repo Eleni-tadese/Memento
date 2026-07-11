@@ -50,8 +50,8 @@ const PhotoPicker = ({ photos, loading, current, onSelect, onClose }) => (
       onClick={e => e.stopPropagation()}
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-serif text-lg text-[#1A2B48] dark:text-[#D9C1BF]">Choose Profile Photo</h3>
-        <button onClick={onClose} className="text-[#1A2B48]/40 dark:text-[#8C5D5D] text-lg hover:text-[#C96B60]">✕</button>
+        <h3 className="font-serif text-lg text-[#352F36] dark:text-[#D9C1BF]">Choose Profile Photo</h3>
+        <button onClick={onClose} className="text-[#352F36]/40 dark:text-[#8C5D5D] text-lg hover:text-[#C96B60]">✕</button>
       </div>
 
       {loading ? (
@@ -62,7 +62,7 @@ const PhotoPicker = ({ photos, loading, current, onSelect, onClose }) => (
           </svg>
         </div>
       ) : photos.length === 0 ? (
-        <p className="text-center py-10 font-serif italic text-[#1A2B48]/40 dark:text-[#8C5D5D] text-sm">
+        <p className="text-center py-10 font-serif italic text-[#352F36]/40 dark:text-[#8C5D5D] text-sm">
           No photos yet — upload memories with photos first.
         </p>
       ) : (
@@ -251,7 +251,7 @@ const Profile = () => {
         {/* ── MY PROFILE CARD ── */}
         <div className="rounded-2xl bg-white dark:bg-[#291008]/80 border border-black/5 dark:border-[#D9C1BF]/8 shadow-md overflow-hidden">
           {/* Header bar */}
-          <div className="h-24 bg-gradient-to-r from-[#C96B60]/30 via-[#BF8F8F]/20 to-[#7AAEC8]/20 dark:from-[#8E5B60]/50 dark:via-[#591F12] dark:to-[#40110D]" />
+          <div className="h-24 bg-gradient-to-r from-[#C96B60]/30 via-[#BF8F8F]/20 to-[#F7CAD0]/20 dark:from-[#8E5B60]/50 dark:via-[#591F12] dark:to-[#40110D]" />
 
           <div className="px-6 pb-6">
             {/* Avatar */}
@@ -307,7 +307,7 @@ const Profile = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={cancel}
-                    className="px-4 py-2 rounded-xl border border-black/10 dark:border-[#D9C1BF]/12 text-sm text-[#1A2B48]/60 dark:text-[#BF8F8F] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    className="px-4 py-2 rounded-xl border border-black/10 dark:border-[#D9C1BF]/12 text-sm text-[#352F36]/60 dark:text-[#BF8F8F] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                   >
                     Cancel
                   </button>
@@ -345,28 +345,28 @@ const Profile = () => {
             {/* ── VIEW MODE ── */}
             {!editing && (
               <div className="space-y-2">
-                <h2 className="font-serif text-2xl font-bold text-[#1A2B48] dark:text-[#D9C1BF]">
+                <h2 className="font-serif text-2xl font-bold text-[#352F36] dark:text-[#D9C1BF]">
                   {profile?.display_name}
                 </h2>
-                <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D]">{profile?.email}</p>
+                <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D]">{profile?.email}</p>
 
                 {profile?.bio && (
-                  <p className="mt-3 text-sm text-[#1A2B48]/70 dark:text-[#BF8F8F] leading-relaxed">{profile.bio}</p>
+                  <p className="mt-3 text-sm text-[#352F36]/70 dark:text-[#BF8F8F] leading-relaxed">{profile.bio}</p>
                 )}
 
                 <div className="mt-4 flex flex-wrap gap-4">
                   {profile?.location && (
-                    <span className="flex items-center gap-1.5 text-xs text-[#1A2B48]/55 dark:text-[#8C5D5D]">
-                      📍 {profile.location}
+                    <span className="flex items-center gap-1.5 text-xs text-[#352F36]/55 dark:text-[#8C5D5D]">
+                      {profile.location}
                     </span>
                   )}
                   {profile?.birthday && (
-                    <span className="flex items-center gap-1.5 text-xs text-[#1A2B48]/55 dark:text-[#8C5D5D]">
+                    <span className="flex items-center gap-1.5 text-xs text-[#352F36]/55 dark:text-[#8C5D5D]">
                       🎂 {fmtBirthday(profile.birthday)}
                     </span>
                   )}
                   {!profile?.bio && !profile?.location && !profile?.birthday && (
-                    <p className="text-sm font-serif italic text-[#1A2B48]/30 dark:text-[#8C5D5D]">
+                    <p className="text-sm font-serif italic text-[#352F36]/30 dark:text-[#8C5D5D]">
                       Click "Edit Profile" to add your details
                     </p>
                   )}
@@ -383,7 +383,7 @@ const Profile = () => {
               >
                 {/* Display name */}
                 <div>
-                  <label className="block text-xs font-medium text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-1.5">
+                  <label className="block text-xs font-medium text-[#352F36]/60 dark:text-[#BF8F8F] mb-1.5">
                     Display Name <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -397,7 +397,7 @@ const Profile = () => {
 
                 {/* Profile photo helpers */}
                 <div>
-                  <label className="block text-xs font-medium text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-2">
+                  <label className="block text-xs font-medium text-[#352F36]/60 dark:text-[#BF8F8F] mb-2">
                     Profile Photo
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -438,7 +438,7 @@ const Profile = () => {
 
                 {/* Bio */}
                 <div>
-                  <label className="block text-xs font-medium text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-1.5">
+                  <label className="block text-xs font-medium text-[#352F36]/60 dark:text-[#BF8F8F] mb-1.5">
                     Bio
                   </label>
                   <textarea
@@ -453,7 +453,7 @@ const Profile = () => {
                 {/* Location + Birthday in a row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-1.5">
+                    <label className="block text-xs font-medium text-[#352F36]/60 dark:text-[#BF8F8F] mb-1.5">
                       Location
                     </label>
                     <input
@@ -465,7 +465,7 @@ const Profile = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#1A2B48]/60 dark:text-[#BF8F8F] mb-1.5">
+                    <label className="block text-xs font-medium text-[#352F36]/60 dark:text-[#BF8F8F] mb-1.5">
                       Birthday
                     </label>
                     <input
@@ -484,25 +484,25 @@ const Profile = () => {
         {/* ── PARTNER PROFILE (read-only) ── */}
         {partner && (
           <div className="rounded-2xl bg-white dark:bg-[#291008]/80 border border-black/5 dark:border-[#D9C1BF]/8 shadow-md overflow-hidden">
-            <div className="h-16 bg-gradient-to-r from-[#BF8F8F]/25 via-[#C96B60]/15 to-[#7AAEC8]/15 dark:from-[#8C5D5D]/40 dark:via-[#591F12] dark:to-[#40110D]" />
+            <div className="h-16 bg-gradient-to-r from-[#BF8F8F]/25 via-[#C96B60]/15 to-[#F7CAD0]/15 dark:from-[#8C5D5D]/40 dark:via-[#591F12] dark:to-[#40110D]" />
             <div className="px-6 pb-6">
               <div className="-mt-10 mb-4 flex items-end justify-between">
                 <Avatar src={partner.avatar_url} name={partner.display_name} size="sm" />
-                <span className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] font-medium tracking-wider uppercase">Partner</span>
+                <span className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D] font-medium tracking-wider uppercase">Partner</span>
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#1A2B48] dark:text-[#D9C1BF]">{partner.display_name}</h3>
+              <h3 className="font-serif text-xl font-bold text-[#352F36] dark:text-[#D9C1BF]">{partner.display_name}</h3>
               {partner.bio && (
-                <p className="mt-2 text-sm text-[#1A2B48]/65 dark:text-[#BF8F8F] leading-relaxed">{partner.bio}</p>
+                <p className="mt-2 text-sm text-[#352F36]/65 dark:text-[#BF8F8F] leading-relaxed">{partner.bio}</p>
               )}
               <div className="mt-3 flex flex-wrap gap-4">
                 {partner.location && (
-                  <span className="text-xs text-[#1A2B48]/50 dark:text-[#8C5D5D]">📍 {partner.location}</span>
+                  <span className="text-xs text-[#352F36]/50 dark:text-[#8C5D5D]">{partner.location}</span>
                 )}
                 {partner.birthday && (
-                  <span className="text-xs text-[#1A2B48]/50 dark:text-[#8C5D5D]">🎂 {fmtBirthday(partner.birthday)}</span>
+                  <span className="text-xs text-[#352F36]/50 dark:text-[#8C5D5D]">🎂 {fmtBirthday(partner.birthday)}</span>
                 )}
                 {!partner.bio && !partner.location && !partner.birthday && (
-                  <p className="text-sm font-serif italic text-[#1A2B48]/25 dark:text-[#8C5D5D]">
+                  <p className="text-sm font-serif italic text-[#352F36]/25 dark:text-[#8C5D5D]">
                     Your partner hasn't filled in their profile yet
                   </p>
                 )}
@@ -514,7 +514,7 @@ const Profile = () => {
         {/* ── No partner yet ── */}
         {!partner && (
           <div className="rounded-2xl bg-white/50 dark:bg-[#291008]/40 border border-dashed border-[#C96B60]/20 dark:border-[#BF8F8F]/15 p-6 text-center">
-            <p className="font-serif italic text-[#1A2B48]/35 dark:text-[#8C5D5D] text-sm">
+            <p className="font-serif italic text-[#352F36]/35 dark:text-[#8C5D5D] text-sm">
               Partner profile will appear here once they accept your invite
             </p>
           </div>

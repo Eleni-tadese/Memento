@@ -1,80 +1,71 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import StarsBackground from './StarsBackground';
-import PetalEffect from './PetalEffect';
-import {
-  FlowerIcon, HeartIcon, TimelineIcon, MailIcon,
-  CaptureIcon, SearchIcon, SunIcon, MoonIcon,
-} from './Icons';
+import { getProfile } from '../api/profile';
+import RomanticBackground from './RomanticBackground';
+
+/* Material (React) icons — no emoji anywhere in the UI */
+import HomeRounded from '@mui/icons-material/HomeRounded';
+import PhotoLibraryRounded from '@mui/icons-material/PhotoLibraryRounded';
+import AccessTimeRounded from '@mui/icons-material/AccessTimeRounded';
+import MailOutlineRounded from '@mui/icons-material/MailOutlineRounded';
+import SettingsRounded from '@mui/icons-material/SettingsRounded';
+import SearchRounded from '@mui/icons-material/SearchRounded';
+import FavoriteBorderRounded from '@mui/icons-material/FavoriteBorderRounded';
+import MenuRounded from '@mui/icons-material/MenuRounded';
+import CloseRounded from '@mui/icons-material/CloseRounded';
+import LogoutRounded from '@mui/icons-material/LogoutRounded';
+import PersonRounded from '@mui/icons-material/PersonRounded';
+import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRounded';
+import FavoriteRounded from '@mui/icons-material/FavoriteRounded';
+import WbSunnyRounded from '@mui/icons-material/WbSunnyRounded';
+import DarkModeRounded from '@mui/icons-material/DarkModeRounded';
+
+/* Tracks which user's profile has been hydrated this session (survives route
+   remounts of AppLayout, resets naturally when a different user logs in). */
+let hydratedProfileFor = null;
 
 /* ─── Constants ─── */
-const SIDEBAR_W   = 260;
-const SIDEBAR_COL = 72;
+const SIDEBAR_W = 264;
+const SIDEBAR_COL = 84;
+const EASE = [0.25, 0.46, 0.45, 0.94];
+
+const NAV_ITEMS = [
+  { label: 'Dashboard', href: '/dashboard', Icon: HomeRounded },
+  { label: 'Memories', href: '/memories', Icon: PhotoLibraryRounded },
+  { label: 'Timeline', href: '/timeline', Icon: AccessTimeRounded },
+  { label: 'Letters', href: '/letters', Icon: MailOutlineRounded },
+  { label: 'Settings', href: '/profile', Icon: SettingsRounded },
+];
 
 /* ─── user avatar circle (image or initials) ─── */
-const UserAvatar = ({ user, size = 7 }) => {
-  const sz = `h-${size} w-${size}`;
-  if (user?.avatar_url) return (
-    <img
-      src={user.avatar_url}
-      alt={user.display_name}
-      className={`${sz} rounded-full object-cover border border-white/20 shrink-0`}
-    />
-  );
+const UserAvatar = ({ user, size = 36 }) => {
+  if (user?.avatar_url)
+    return (
+      <img
+        src={user.avatar_url}
+        alt={user.display_name}
+        className="rounded-full object-cover shrink-0 ring-2 ring-white shadow-sm"
+        style={{ height: size, width: size }}
+      />
+    );
   return (
-    <div className={`${sz} rounded-full bg-[#C96B60]/25 dark:bg-[#8E5B60]/70 flex items-center justify-center text-xs font-bold text-[#C96B60] dark:text-[#D9C1BF] shrink-0`}>
+    <div
+      className="rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0 shadow-sm"
+      style={{
+        height: size,
+        width: size,
+        background: 'linear-gradient(135deg, #E85D75 0%, #C44569 100%)',
+      }}
+    >
       {user?.display_name?.[0]?.toUpperCase() || 'U'}
     </div>
   );
 };
 
-const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard',  Icon: CaptureIcon },
-  { label: 'Memories',  href: '/memories',   Icon: HeartIcon   },
-  { label: 'Timeline',  href: '/timeline',   Icon: TimelineIcon },
-  { label: 'Letters',   href: '/letters',    Icon: MailIcon    },
-];
-
-const EASE = [0.25, 0.46, 0.45, 0.94];
-
-/* ─── Small inline icons (SVG) ─── */
-const LogoutSVG = ({ cls = 'h-[18px] w-[18px]' }) => (
-  <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-  </svg>
-);
-
-const BellSVG = ({ cls = 'h-[18px] w-[18px]' }) => (
-  <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-  </svg>
-);
-
-const HamburgerSVG = ({ cls = 'h-5 w-5' }) => (
-  <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-  </svg>
-);
-
-const CloseSVG = ({ cls = 'h-5 w-5' }) => (
-  <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-  </svg>
-);
-
-const ChevronSVG = ({ open, cls = 'h-3 w-3' }) => (
-  <svg className={`${cls} transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-  </svg>
-);
-
-/* ─── Tooltip (shown when sidebar is collapsed) ─── */
+/* ─── Tooltip (collapsed sidebar) ─── */
 const SideTooltip = ({ label, visible }) => (
   <AnimatePresence>
     {visible && (
@@ -84,23 +75,19 @@ const SideTooltip = ({ label, visible }) => (
         exit={{ opacity: 0, x: 4 }}
         transition={{ duration: 0.13 }}
         className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5
-          rounded-lg bg-[#1A2B48] dark:bg-[#D9C1BF]
-          text-white dark:text-[#1A2B48]
-          text-xs font-medium whitespace-nowrap
-          z-[100] shadow-xl pointer-events-none"
+          rounded-xl bg-[#C44569] text-white text-xs font-medium whitespace-nowrap
+          z-[100] shadow-lg pointer-events-none"
       >
         {label}
-        <span className="absolute right-full top-1/2 -translate-y-1/2
-          border-[5px] border-transparent border-r-[#1A2B48] dark:border-r-[#D9C1BF]" />
+        <span className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#C44569]" />
       </motion.div>
     )}
   </AnimatePresence>
 );
 
-/* ─── Shared nav-item (used in both desktop + mobile sidebars) ─── */
+/* ─── Shared nav-item ─── */
 const NavItem = ({ label, href, Icon, active, showText, showTooltip, onClick }) => {
   const [hovered, setHovered] = useState(false);
-
   return (
     <div
       className="relative"
@@ -110,14 +97,21 @@ const NavItem = ({ label, href, Icon, active, showText, showTooltip, onClick }) 
       <Link
         to={href}
         onClick={onClick}
-        className={`flex items-center rounded-xl transition-all duration-200
-          ${showText ? 'gap-3 px-3 py-2.5' : 'justify-center px-0 py-2.5 mx-auto w-10'}
+        className={`group relative flex items-center rounded-full transition-all duration-300
+          ${showText ? 'gap-3 px-4 py-3' : 'justify-center px-0 py-3 mx-auto w-12'}
           ${active
-            ? 'bg-[#C96B60] text-white dark:bg-[#8E5B60] shadow-sm'
-            : 'text-[#1A2B48]/55 dark:text-[#BF8F8F]/60 hover:bg-black/6 dark:hover:bg-white/6 hover:text-[#1A2B48] dark:hover:text-[#D9C1BF]'
+            ? 'bg-[#FFE1E7] text-[#C44569] shadow-[0_6px_18px_rgba(232,93,117,0.18)]'
+            : 'text-[#7A6A73] hover:bg-[#FFF1F3] hover:text-[#C44569] hover:translate-x-0.5'
           }`}
       >
-        <Icon className="h-[18px] w-[18px] shrink-0" />
+        {/* left accent line on active */}
+        {active && (
+          <motion.span
+            layoutId="nav-accent"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-[#E85D75]"
+          />
+        )}
+        <Icon style={{ fontSize: 22 }} className="shrink-0" />
         <AnimatePresence>
           {showText && (
             <motion.span
@@ -132,20 +126,15 @@ const NavItem = ({ label, href, Icon, active, showText, showTooltip, onClick }) 
             </motion.span>
           )}
         </AnimatePresence>
-        {active && showText && (
-          <span className="ml-auto text-[10px] opacity-60 select-none">🌸</span>
-        )}
       </Link>
-
       {showTooltip && <SideTooltip label={label} visible={hovered} />}
     </div>
   );
 };
 
-/* ─── Shared footer action (theme / logout) ─── */
-const FooterBtn = ({ icon, label, onClick, danger, showText, showTooltip }) => {
+/* ─── Footer action ─── */
+const FooterBtn = ({ Icon, label, onClick, danger, showText, showTooltip }) => {
   const [hovered, setHovered] = useState(false);
-
   return (
     <div
       className="relative"
@@ -154,14 +143,14 @@ const FooterBtn = ({ icon, label, onClick, danger, showText, showTooltip }) => {
     >
       <button
         onClick={onClick}
-        className={`w-full flex items-center rounded-xl transition-all duration-200
-          ${showText ? 'gap-3 px-3 py-2.5' : 'justify-center px-0 py-2.5 mx-auto w-10'}
+        className={`w-full flex items-center rounded-full transition-all duration-300
+          ${showText ? 'gap-3 px-4 py-2.5' : 'justify-center px-0 py-2.5 mx-auto w-12'}
           ${danger
-            ? 'text-[#1A2B48]/50 dark:text-[#BF8F8F]/50 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-500 dark:hover:text-red-400'
-            : 'text-[#1A2B48]/50 dark:text-[#BF8F8F]/50 hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#1A2B48] dark:hover:text-[#D9C1BF]'
+            ? 'text-[#7A6A73] hover:bg-[#FFE1E7] hover:text-[#E85D75]'
+            : 'text-[#7A6A73] hover:bg-[#FFF1F3] hover:text-[#C44569]'
           }`}
       >
-        {icon}
+        <Icon style={{ fontSize: 20 }} className="shrink-0" />
         <AnimatePresence>
           {showText && (
             <motion.span
@@ -177,21 +166,42 @@ const FooterBtn = ({ icon, label, onClick, danger, showText, showTooltip }) => {
           )}
         </AnimatePresence>
       </button>
-
       {showTooltip && <SideTooltip label={label} visible={hovered} />}
     </div>
   );
 };
 
 /* ─── Main Layout ─── */
-const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
-  const { user, logout } = useAuth();
+const AppLayout = ({ children, pageTitle, title, pageActions, noPadding }) => {
+  pageTitle = pageTitle || title;
+  const { user, logout, updateUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
+  /* Hydrate the logged-in user's profile (name + avatar) from the server once
+     per session, so anything they set persists across logout / login. */
+  useEffect(() => {
+    const key = user?.id || user?.email;
+    if (!user || !key || hydratedProfileFor === key) return;
+    hydratedProfileFor = key;
+    getProfile()
+      .then((data) => {
+        if (data?.self) {
+          updateUser({
+            display_name: data.self.display_name,
+            avatar_url: data.self.avatar_url,
+            email: data.self.email,
+          });
+        }
+      })
+      .catch(() => {
+        hydratedProfileFor = null; // allow a retry on a later mount
+      });
+  }, [user, updateUser]);
+
   /* sidebar state */
-  const [expanded, setExpanded] = useState(() =>
-    localStorage.getItem('sidebar_expanded') !== 'false'
+  const [expanded, setExpanded] = useState(
+    () => localStorage.getItem('sidebar_expanded') !== 'false'
   );
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -207,17 +217,17 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
     return () => window.removeEventListener('resize', handler);
   }, []);
 
-  /* close mobile sidebar on route change */
-  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
-  /* ── unread message count (driven by Letters.jsx via custom event) ── */
+  /* unread message count */
   const [unreadMsgs, setUnreadMsgs] = useState(() =>
     parseInt(localStorage.getItem('memento_unread_msgs') || '0', 10)
   );
   useEffect(() => {
     const handler = (e) => setUnreadMsgs(e.detail ?? 0);
     window.addEventListener('memento:unread', handler);
-    // also sync if another tab updated localStorage
     const storageHandler = () =>
       setUnreadMsgs(parseInt(localStorage.getItem('memento_unread_msgs') || '0', 10));
     window.addEventListener('storage', storageHandler);
@@ -231,16 +241,14 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
   const avatarRef = useRef(null);
   useEffect(() => {
     const handle = (e) => {
-      if (avatarRef.current && !avatarRef.current.contains(e.target)) {
-        setAvatarOpen(false);
-      }
+      if (avatarRef.current && !avatarRef.current.contains(e.target)) setAvatarOpen(false);
     };
     document.addEventListener('mousedown', handle);
     return () => document.removeEventListener('mousedown', handle);
   }, []);
 
   const toggleSidebar = useCallback(() => {
-    setExpanded(prev => {
+    setExpanded((prev) => {
       const next = !prev;
       localStorage.setItem('sidebar_expanded', String(next));
       return next;
@@ -249,28 +257,36 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
 
   const isActive = (href) => {
     if (href === '/dashboard') return location.pathname === '/dashboard';
-    if (href === '/memories')  return location.pathname.startsWith('/memories');
+    if (href === '/memories') return location.pathname.startsWith('/memories');
+    if (href === '/profile') return location.pathname.startsWith('/profile');
     return location.pathname.startsWith(href);
   };
 
-  const confirmLogout = () => { setLogoutConfirm(false); setAvatarOpen(false); logout(); };
+  const confirmLogout = () => {
+    setLogoutConfirm(false);
+    setAvatarOpen(false);
+    logout();
+  };
 
-  /* derived */
   const sidebarW = expanded ? SIDEBAR_W : SIDEBAR_COL;
   const mainMargin = isMobile ? 0 : sidebarW;
 
-  /* ── Sidebar body (shared markup, different props per instance) ── */
+  /* ── Sidebar body ── */
   const renderSidebarBody = (isMobileCtx = false) => {
-    const showText  = isMobileCtx || expanded;
-    const showTip   = !isMobileCtx && !expanded;
+    const showText = isMobileCtx || expanded;
+    const showTip = !isMobileCtx && !expanded;
 
     return (
       <div className="flex flex-col h-full select-none">
-
         {/* Logo */}
-        <div className="flex items-center h-14 border-b border-black/5 dark:border-[#BF8F8F]/10 px-4 shrink-0">
+        <div className={`flex items-center h-[74px] px-5 shrink-0 ${showText ? '' : 'justify-center px-0'}`}>
           <Link to="/dashboard" className="flex items-center gap-3 group min-w-0">
-            <FlowerIcon className="h-5 w-5 text-[#C96B60] dark:text-[#BF8F8F] group-hover:scale-110 transition-transform duration-200 shrink-0" />
+            <span
+              className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md shrink-0 group-hover:scale-105 transition-transform duration-300"
+              style={{ background: 'linear-gradient(135deg, #E85D75 0%, #C44569 100%)' }}
+            >
+              <FavoriteRounded style={{ fontSize: 20 }} className="text-white" />
+            </span>
             <AnimatePresence>
               {showText && (
                 <motion.span
@@ -279,27 +295,25 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -8 }}
                   transition={{ duration: 0.18, ease: EASE }}
-                  className="font-serif text-base font-bold text-[#1A2B48] dark:text-[#D9C1BF] whitespace-nowrap overflow-hidden"
+                  className="font-heading text-xl font-semibold text-[#352F36] whitespace-nowrap overflow-hidden"
                 >
                   Memento
                 </motion.span>
               )}
             </AnimatePresence>
           </Link>
-          {/* Mobile close button */}
           {isMobileCtx && (
             <button
               onClick={() => setMobileOpen(false)}
-              className="ml-auto p-1.5 rounded-lg text-[#1A2B48]/40 dark:text-[#BF8F8F]/40 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              className="ml-auto p-2 rounded-full text-[#7A6A73] hover:bg-[#FFF1F3] transition-colors"
             >
-              <CloseSVG />
+              <CloseRounded style={{ fontSize: 20 }} />
             </button>
           )}
         </div>
 
         {/* Nav */}
-        <nav className={`flex-1 py-3 space-y-0.5 overflow-y-auto overflow-x-hidden
-          ${showText ? 'px-2' : 'px-2 flex flex-col items-center'}`}>
+        <nav className={`flex-1 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden ${showText ? 'px-3' : 'px-3 flex flex-col items-center'}`}>
           {NAV_ITEMS.map(({ label, href, Icon }) => (
             <NavItem
               key={href}
@@ -315,30 +329,22 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
         </nav>
 
         {/* Footer */}
-        <div className={`py-3 border-t border-black/5 dark:border-[#BF8F8F]/10 space-y-0.5
-          ${showText ? 'px-2' : 'px-2 flex flex-col items-center'}`}>
-
+        <div className={`py-4 mt-auto space-y-1 border-t border-[#F1D7DD] ${showText ? 'px-3' : 'px-3 flex flex-col items-center'}`}>
           <FooterBtn
-            icon={theme === 'dark'
-              ? <SunIcon className="h-[18px] w-[18px] shrink-0" />
-              : <MoonIcon className="h-[18px] w-[18px] shrink-0" />
-            }
+            Icon={theme === 'dark' ? WbSunnyRounded : DarkModeRounded}
             label={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             onClick={toggleTheme}
             showText={showText}
             showTooltip={showTip}
           />
-
           <FooterBtn
-            icon={<LogoutSVG />}
+            Icon={LogoutRounded}
             label="Logout"
             onClick={() => setLogoutConfirm(true)}
             danger
             showText={showText}
             showTooltip={showTip}
           />
-
-          {/* User chip */}
           <AnimatePresence>
             {showText && (
               <motion.div
@@ -347,43 +353,43 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="flex items-center gap-2.5 px-3 pt-2 mt-1 min-w-0"
+                className="flex items-center gap-3 px-3 pt-3 mt-1 min-w-0"
               >
-                <UserAvatar user={user} size={7} />
-                <span className="text-xs text-[#1A2B48]/55 dark:text-[#BF8F8F]/70 truncate">{user?.display_name || 'You'}</span>
+                <UserAvatar user={user} size={34} />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-[#352F36] truncate leading-tight">
+                    {user?.display_name || 'You'}
+                  </p>
+                  <p className="text-[11px] text-[#7A6A73] truncate">{user?.email}</p>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-
       </div>
     );
   };
 
-  /* ─────────────────────────────────────────── RENDER ─────── */
+  /* ─────────────────────────── RENDER ─────── */
   return (
-    <div className="relative flex min-h-screen bg-[#FDF0EE] dark:bg-[#40110D] text-[#1A2B48] dark:text-[#D9C1BF] font-sans">
-      <StarsBackground />
-      <PetalEffect />
+    <div className="romance-scope relative flex min-h-screen bg-romance-page">
+      <RomanticBackground />
 
-      {/* ══════════════ DESKTOP SIDEBAR ══════════════ */}
+      {/* ══════════ DESKTOP SIDEBAR (glass) ══════════ */}
       <motion.aside
         initial={false}
         animate={{ width: sidebarW }}
         transition={{ duration: 0.3, ease: EASE }}
-        className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 z-30
-          bg-white/40 dark:bg-[#2a0a08]/70
-          border-r border-black/6 dark:border-[#BF8F8F]/10
-          backdrop-blur-md overflow-hidden shrink-0"
+        className="hidden md:flex flex-col fixed left-3 top-3 bottom-3 z-30
+          rounded-[28px] romance-glass shadow-romance overflow-hidden shrink-0"
       >
         {renderSidebarBody(false)}
       </motion.aside>
 
-      {/* ══════════════ MOBILE SIDEBAR + BACKDROP ══════════════ */}
+      {/* ══════════ MOBILE SIDEBAR ══════════ */}
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
@@ -391,20 +397,18 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 z-40 bg-black/55 backdrop-blur-[2px] md:hidden"
+              className="fixed inset-0 z-40 bg-[#352F36]/30 backdrop-blur-[2px] md:hidden"
             />
-
-            {/* Slide-in panel */}
             <motion.aside
               key="mobile-sidebar"
-              initial={{ x: -SIDEBAR_W - 20 }}
+              initial={{ x: -SIDEBAR_W - 30 }}
               animate={{ x: 0 }}
-              exit={{ x: -SIDEBAR_W - 20 }}
+              exit={{ x: -SIDEBAR_W - 30 }}
               transition={{ type: 'spring', damping: 28, stiffness: 280 }}
               className="fixed left-0 top-0 bottom-0 z-50 md:hidden overflow-hidden flex flex-col"
               style={{ width: SIDEBAR_W }}
             >
-              <div className="h-full bg-white dark:bg-[#220a08] border-r border-black/6 dark:border-[#BF8F8F]/10">
+              <div className="h-full romance-glass border-r border-[#F1D7DD]">
                 {renderSidebarBody(true)}
               </div>
             </motion.aside>
@@ -412,183 +416,155 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
         )}
       </AnimatePresence>
 
-      {/* ══════════════ MAIN CONTENT ══════════════ */}
+      {/* ══════════ MAIN ══════════ */}
       <motion.div
         initial={false}
         animate={{ marginLeft: mainMargin }}
         transition={{ duration: 0.3, ease: EASE }}
         className="flex-1 flex flex-col min-h-screen relative z-10"
       >
-
-        {/* ── TOP NAVBAR ── */}
-        <header className="sticky top-0 z-20 flex items-center justify-between
-          h-14 px-3 md:px-5
-          bg-white/70 dark:bg-[#1f0805]/75
-          backdrop-blur-md
-          border-b border-black/6 dark:border-[#D9C1BF]/7
-          shrink-0">
-
-          {/* Left group */}
-          <div className="flex items-center gap-2 min-w-0">
-            {/* Hamburger */}
-            <button
-              onClick={() => isMobile ? setMobileOpen(o => !o) : toggleSidebar()}
-              className="p-2 rounded-xl hover:bg-black/6 dark:hover:bg-white/6 transition-colors
-                text-[#1A2B48]/55 dark:text-[#BF8F8F]/60 shrink-0"
-              aria-label="Toggle menu"
-            >
-              <HamburgerSVG />
-            </button>
-
-            {/* Page title */}
-            {pageTitle && (
-              <h1 className="font-serif text-[15px] font-bold text-[#1A2B48] dark:text-[#D9C1BF] truncate">
-                {pageTitle}
-              </h1>
-            )}
-          </div>
-
-          {/* Right group */}
-          <div className="flex items-center gap-1">
-            {pageActions && (
-              <div className="flex items-center gap-2 mr-2">{pageActions}</div>
-            )}
-
-            {/* Search */}
-            <button className="p-2 rounded-xl hover:bg-black/6 dark:hover:bg-white/6 transition-colors
-              text-[#1A2B48]/45 dark:text-[#BF8F8F]/50 hidden sm:block">
-              <SearchIcon className="h-4 w-4" />
-            </button>
-
-            {/* Notifications — links to /letters, shows unread count */}
-            <Link to="/letters"
-              className="relative p-2 rounded-xl hover:bg-black/6 dark:hover:bg-white/6 transition-colors
-                text-[#1A2B48]/45 dark:text-[#BF8F8F]/50">
-              <BellSVG cls="h-4 w-4" />
-              {unreadMsgs > 0 ? (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-0.5 rounded-full
-                  bg-[#C96B60] text-white text-[9px] font-bold flex items-center justify-center leading-none animate-pulse">
-                  {unreadMsgs > 9 ? '9+' : unreadMsgs}
-                </span>
-              ) : (
-                <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#C96B60]/40" />
-              )}
-            </Link>
-
-            {/* Theme toggle (top-nav shortcut) */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl hover:bg-black/6 dark:hover:bg-white/6 transition-colors
-                text-[#1A2B48]/45 dark:text-[#BF8F8F]/50 hidden sm:block"
-              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-            >
-              {theme === 'dark'
-                ? <SunIcon className="h-4 w-4" />
-                : <MoonIcon className="h-4 w-4" />
-              }
-            </button>
-
-            {/* Avatar + dropdown */}
-            <div className="relative ml-1" ref={avatarRef}>
+        {/* ── FLOATING TOP NAVBAR ── */}
+        <div className="sticky top-0 z-20 px-3 md:px-6 pt-3 md:pt-4">
+          <header className="flex items-center justify-between h-[62px] px-3 md:px-5
+            rounded-full romance-glass shadow-romance-soft">
+            {/* Left */}
+            <div className="flex items-center gap-2 min-w-0">
               <button
-                onClick={() => setAvatarOpen(o => !o)}
-                className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-xl
-                  hover:bg-black/6 dark:hover:bg-white/6 transition-colors"
+                onClick={() => (isMobile ? setMobileOpen((o) => !o) : toggleSidebar())}
+                className="p-2 rounded-full text-[#7A6A73] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors shrink-0"
+                aria-label="Toggle menu"
               >
-                <UserAvatar user={user} size={7} />
-                <span className="text-xs font-medium text-[#1A2B48]/65 dark:text-[#BF8F8F] hidden sm:block max-w-[90px] truncate">
-                  {user?.display_name || 'You'}
-                </span>
-                <ChevronSVG open={avatarOpen} cls="h-3 w-3 text-[#1A2B48]/35 dark:text-[#8C5D5D] hidden sm:block" />
+                <MenuRounded style={{ fontSize: 22 }} />
+              </button>
+              {pageTitle && (
+                <h1 className="font-heading text-lg md:text-xl font-semibold text-[#352F36] truncate">
+                  {pageTitle}
+                </h1>
+              )}
+            </div>
+
+            {/* Right */}
+            <div className="flex items-center gap-1">
+              {pageActions && <div className="flex items-center gap-2 mr-1">{pageActions}</div>}
+
+              <button
+                className="p-2 rounded-full text-[#7A6A73] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors hidden sm:block"
+                aria-label="Search"
+              >
+                <SearchRounded style={{ fontSize: 21 }} />
               </button>
 
-              {/* Avatar dropdown */}
-              <AnimatePresence>
-                {avatarOpen && (
-                  <motion.div
-                    key="avatar-dd"
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    className="absolute right-0 top-full mt-2 w-56
-                      rounded-2xl bg-white dark:bg-[#291008]
-                      shadow-2xl border border-black/6 dark:border-[#D9C1BF]/10
-                      overflow-hidden z-50"
-                  >
-                    {/* User info */}
-                    <div className="px-4 py-3 border-b border-black/5 dark:border-[#D9C1BF]/8">
-                      <p className="text-sm font-semibold text-[#1A2B48] dark:text-[#D9C1BF]">
-                        {user?.display_name}
-                      </p>
-                      <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] truncate mt-0.5">
-                        {user?.email}
-                      </p>
-                    </div>
-
-                    {/* Menu */}
-                    <div className="p-1.5 space-y-0.5">
-                      <Link
-                        to="/profile"
-                        onClick={() => setAvatarOpen(false)}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm
-                          text-[#1A2B48]/70 dark:text-[#BF8F8F]
-                          hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                      >
-                        <span className="text-base">👤</span>
-                        Profile
-                      </Link>
-                      <button
-                        onClick={() => setAvatarOpen(false)}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm
-                          text-[#1A2B48]/70 dark:text-[#BF8F8F]
-                          hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left"
-                      >
-                        <span className="text-base">⚙️</span>
-                        Settings
-                      </button>
-
-                      {/* Theme toggle row */}
-                      <button
-                        onClick={toggleTheme}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm
-                          text-[#1A2B48]/70 dark:text-[#BF8F8F]
-                          hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left"
-                      >
-                        {theme === 'dark'
-                          ? <SunIcon className="h-4 w-4 text-amber-500" />
-                          : <MoonIcon className="h-4 w-4 text-indigo-400" />
-                        }
-                        {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                      </button>
-
-                      <div className="my-1 h-px bg-black/5 dark:bg-[#D9C1BF]/8" />
-
-                      {/* Logout */}
-                      <button
-                        onClick={() => { setAvatarOpen(false); setLogoutConfirm(true); }}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm
-                          text-red-500 dark:text-red-400
-                          hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left"
-                      >
-                        <LogoutSVG cls="h-4 w-4" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </motion.div>
+              <Link
+                to="/letters"
+                className="relative p-2 rounded-full text-[#7A6A73] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors"
+                aria-label="Saved love letters"
+                title="Saved love letters"
+              >
+                <FavoriteBorderRounded style={{ fontSize: 21 }} />
+                {unreadMsgs > 0 ? (
+                  <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-0.5 rounded-full bg-[#E85D75] text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                    {unreadMsgs > 9 ? '9+' : unreadMsgs}
+                  </span>
+                ) : (
+                  <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#E85D75]/50" />
                 )}
-              </AnimatePresence>
+              </Link>
+
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full text-[#7A6A73] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors hidden sm:block"
+                title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              >
+                {theme === 'dark' ? (
+                  <WbSunnyRounded style={{ fontSize: 20 }} />
+                ) : (
+                  <DarkModeRounded style={{ fontSize: 20 }} />
+                )}
+              </button>
+
+              {/* Avatar */}
+              <div className="relative ml-1" ref={avatarRef}>
+                <button
+                  onClick={() => setAvatarOpen((o) => !o)}
+                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-[#FFF1F3] transition-colors"
+                >
+                  <UserAvatar user={user} size={34} />
+                  <span className="text-sm font-medium text-[#352F36] hidden sm:block max-w-[90px] truncate">
+                    {user?.display_name || 'You'}
+                  </span>
+                  <KeyboardArrowDownRounded
+                    style={{ fontSize: 18 }}
+                    className={`text-[#7A6A73] hidden sm:block transition-transform ${avatarOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {avatarOpen && (
+                    <motion.div
+                      key="avatar-dd"
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                      className="absolute right-0 top-full mt-3 w-60 rounded-3xl bg-white shadow-romance border border-[#F1D7DD] overflow-hidden z-50"
+                    >
+                      <div className="px-4 py-3.5 border-b border-[#F1D7DD] flex items-center gap-3">
+                        <UserAvatar user={user} size={40} />
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-[#352F36] truncate">{user?.display_name}</p>
+                          <p className="text-xs text-[#7A6A73] truncate">{user?.email}</p>
+                        </div>
+                      </div>
+                      <div className="p-2 space-y-0.5">
+                        <Link
+                          to="/profile"
+                          onClick={() => setAvatarOpen(false)}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm text-[#352F36] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors"
+                        >
+                          <PersonRounded style={{ fontSize: 20 }} /> Profile
+                        </Link>
+                        <Link
+                          to="/profile"
+                          onClick={() => setAvatarOpen(false)}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm text-[#352F36] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors"
+                        >
+                          <SettingsRounded style={{ fontSize: 20 }} /> Settings
+                        </Link>
+                        <button
+                          onClick={toggleTheme}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm text-[#352F36] hover:bg-[#FFF1F3] hover:text-[#C44569] transition-colors text-left"
+                        >
+                          {theme === 'dark' ? (
+                            <WbSunnyRounded style={{ fontSize: 20 }} />
+                          ) : (
+                            <DarkModeRounded style={{ fontSize: 20 }} />
+                          )}
+                          {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                        </button>
+                        <div className="my-1 h-px bg-[#F1D7DD]" />
+                        <button
+                          onClick={() => {
+                            setAvatarOpen(false);
+                            setLogoutConfirm(true);
+                          }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm text-[#E85D75] hover:bg-[#FFE1E7] transition-colors text-left"
+                        >
+                          <LogoutRounded style={{ fontSize: 20 }} /> Sign Out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
+        </div>
 
         {/* ── Page content ── */}
-        <main className={`flex-1 ${noPadding ? '' : 'p-5 md:p-8'}`}>
-          {children}
-        </main>
+        <main className={`flex-1 ${noPadding ? '' : 'px-4 md:px-8 py-6 md:py-8'}`}>{children}</main>
       </motion.div>
 
-      {/* ══════════════ LOGOUT CONFIRMATION MODAL ══════════════ */}
+      {/* ══════════ LOGOUT MODAL ══════════ */}
       <AnimatePresence>
         {logoutConfirm && (
           <motion.div
@@ -598,37 +574,33 @@ const AppLayout = ({ children, pageTitle, pageActions, noPadding }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
             onClick={() => setLogoutConfirm(false)}
-            className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[60] bg-[#352F36]/40 backdrop-blur-sm flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.92, y: 18 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 18 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-sm bg-white dark:bg-[#291008] rounded-2xl shadow-2xl p-6
-                border border-black/5 dark:border-[#D9C1BF]/10"
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-white rounded-[28px] shadow-romance-lg p-7 border border-[#F1D7DD]"
             >
-              <div className="text-3xl mb-3 text-center">🚪</div>
-              <h3 className="font-serif text-lg text-center text-[#1A2B48] dark:text-[#D9C1BF] mb-1">
-                Sign out of Memento?
-              </h3>
-              <p className="text-sm text-center text-[#1A2B48]/50 dark:text-[#8C5D5D] mb-6 leading-relaxed">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#FFE1E7]">
+                <LogoutRounded style={{ fontSize: 26 }} className="text-[#E85D75]" />
+              </div>
+              <h3 className="font-heading text-xl text-center text-[#352F36] mb-1">Sign out of Memento?</h3>
+              <p className="text-sm text-center text-[#7A6A73] mb-6 leading-relaxed">
                 You will need to log back in to access your memories and moments together.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setLogoutConfirm(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-black/10 dark:border-[#D9C1BF]/12
-                    text-sm font-medium text-[#1A2B48]/60 dark:text-[#BF8F8F]
-                    hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                  className="flex-1 py-3 rounded-full border border-[#F1D7DD] text-sm font-medium text-[#7A6A73] hover:bg-[#FFF1F3] transition-colors"
                 >
                   Stay
                 </button>
                 <button
                   onClick={confirmLogout}
-                  className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600
-                    text-white text-sm font-semibold transition-colors shadow-sm"
+                  className="flex-1 py-3 rounded-full romance-btn text-sm"
                 >
                   Sign Out
                 </button>

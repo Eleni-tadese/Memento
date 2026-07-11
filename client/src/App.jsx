@@ -19,6 +19,8 @@ import MemoryDetail from './pages/MemoryDetail'
 import Profile from './pages/Profile'
 import Timeline from './pages/Timeline'
 import Letters from './pages/Letters'
+import LetterDetail from './pages/LetterDetail'
+import LetterCreate from './pages/LetterCreate'
 
 export default function App() {
   return (
@@ -48,6 +50,9 @@ export default function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/timeline" element={<Timeline />} />
                 <Route path="/letters" element={<Letters />} />
+                <Route path="/letters/new" element={<LetterCreate />} />
+                <Route path="/letters/:id" element={<LetterDetail />} />
+                <Route path="/letters/:id/edit" element={<LetterCreate />} />
               </Route>
             </Routes>
           </ToastProvider>

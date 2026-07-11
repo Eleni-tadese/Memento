@@ -87,7 +87,7 @@ const UploadMemory = () => {
       images.forEach((f) => formData.append('images', f));
       videos.forEach((f) => formData.append('videos', f));
       const result = await createMemory(formData);
-      showToast('Memory saved! ❤️', 'success');
+      showToast('Memory saved!', 'success');
       navigate(`/memories/${result.memory.id}`);
     } catch (err) {
       const msg =
@@ -103,12 +103,12 @@ const UploadMemory = () => {
   };
 
   const inputCls = 'memento-input w-full';
-  const labelCls = 'block text-sm font-medium text-[#1A2B48] dark:text-[#BF8F8F] mb-1.5';
+  const labelCls = 'block text-sm font-medium text-[#352F36] dark:text-[#BF8F8F] mb-1.5';
 
   const CancelBtn = (
     <Link
       to="/memories"
-      className="text-sm text-[#1A2B48]/50 dark:text-[#8C5D5D] hover:text-[#C96B60] dark:hover:text-[#BF8F8F] transition-colors"
+      className="text-sm text-[#352F36]/50 dark:text-[#8C5D5D] hover:text-[#C96B60] dark:hover:text-[#BF8F8F] transition-colors"
     >
       Cancel
     </Link>
@@ -122,11 +122,11 @@ const UploadMemory = () => {
           {/* Drop zone header */}
           <div
             onClick={() => imageInputRef.current?.click()}
-            className="mb-6 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#C96B60]/30 dark:border-[#BF8F8F]/20 bg-[#FFF0EC]/50 dark:bg-[#8E5B60]/10 py-10 cursor-pointer hover:border-[#C96B60]/60 dark:hover:border-[#BF8F8F]/40 hover:bg-[#FFF0EC]/80 dark:hover:bg-[#8E5B60]/20 transition-all group"
+            className="mb-6 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#C96B60]/30 dark:border-[#BF8F8F]/20 bg-[#FFF1F3]/50 dark:bg-[#8E5B60]/10 py-10 cursor-pointer hover:border-[#C96B60]/60 dark:hover:border-[#BF8F8F]/40 hover:bg-[#FFF1F3]/80 dark:hover:bg-[#8E5B60]/20 transition-all group"
           >
             <span className="text-3xl text-[#C96B60]/60 dark:text-[#BF8F8F]/50 group-hover:scale-110 transition-transform">☁</span>
             <p className="text-sm font-medium text-[#C96B60] dark:text-[#BF8F8F]">Drop photos or videos here</p>
-            <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D]">JPG · PNG · MP4</p>
+            <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D]">JPG · PNG · MP4</p>
             <input
               ref={imageInputRef}
               type="file"
@@ -210,13 +210,13 @@ const UploadMemory = () => {
                   accept="image/*"
                   multiple
                   onChange={handleImageChange}
-                  className="w-full cursor-pointer text-sm text-[#1A2B48]/60 dark:text-[#8C5D5D]
+                  className="w-full cursor-pointer text-sm text-[#352F36]/60 dark:text-[#8C5D5D]
                     file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-medium
                     file:bg-[#C96B60]/12 dark:file:bg-[#8E5B60]/30
                     file:text-[#C96B60] dark:file:text-[#BF8F8F]
                     hover:file:bg-[#C96B60]/20 dark:hover:file:bg-[#8E5B60]/50"
                 />
-                <p className="mt-1 text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D]">Max 10 images</p>
+                <p className="mt-1 text-xs text-[#352F36]/40 dark:text-[#8C5D5D]">Max 10 images</p>
                 {imagePreviews.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {imagePreviews.map((preview, idx) => (
@@ -241,17 +241,17 @@ const UploadMemory = () => {
                   accept="video/*"
                   multiple
                   onChange={handleVideoChange}
-                  className="w-full cursor-pointer text-sm text-[#1A2B48]/60 dark:text-[#8C5D5D]
+                  className="w-full cursor-pointer text-sm text-[#352F36]/60 dark:text-[#8C5D5D]
                     file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-medium
                     file:bg-[#C96B60]/12 dark:file:bg-[#8E5B60]/30
                     file:text-[#C96B60] dark:file:text-[#BF8F8F]
                     hover:file:bg-[#C96B60]/20 dark:hover:file:bg-[#8E5B60]/50"
                 />
-                <p className="mt-1 text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D]">Max 3 videos</p>
+                <p className="mt-1 text-xs text-[#352F36]/40 dark:text-[#8C5D5D]">Max 3 videos</p>
                 {videos.length > 0 && (
                   <ul className="mt-3 space-y-1.5">
                     {videos.map((vid, idx) => (
-                      <li key={idx} className="flex items-center justify-between rounded-lg border border-white/40 dark:border-[#D9C1BF]/8 bg-white/30 dark:bg-[#40110D]/50 p-2 text-xs text-[#1A2B48]/60 dark:text-[#8C5D5D]">
+                      <li key={idx} className="flex items-center justify-between rounded-lg border border-white/40 dark:border-[#D9C1BF]/8 bg-white/30 dark:bg-[#40110D]/50 p-2 text-xs text-[#352F36]/60 dark:text-[#8C5D5D]">
                         <span className="truncate max-w-[75%]">📹 {vid.name}</span>
                         <button type="button" onClick={() => handleRemoveVideo(idx)}
                           className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-600/80 text-xs text-white hover:bg-red-500">
@@ -280,7 +280,7 @@ const UploadMemory = () => {
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#C96B60] dark:bg-[#8E5B60] px-6 py-3.5 text-base font-semibold text-white hover:bg-[#B05A50] dark:hover:bg-[#BF8F8F]/80 shadow-md transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Save Memory ❤️
+                Save Memory
               </button>
               {error && (
                 <div className="w-full text-red-600 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-950/20 py-2.5 px-4 rounded-lg border border-red-200 dark:border-red-900/30">

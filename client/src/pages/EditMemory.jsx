@@ -135,7 +135,7 @@ const EditMemory = () => {
         videos.forEach((f) => fd.append('videos', f));
         await uploadMedia(id, fd);
       }
-      showToast('Memory updated ❤️', 'success');
+      showToast('Memory updated', 'success');
       navigate(`/memories/${id}`);
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Failed to update memory.';
@@ -149,12 +149,12 @@ const EditMemory = () => {
   const existingImages = existingMedia.filter((m) => m.media_type === 'image');
 
   const inputCls = 'memento-input w-full';
-  const labelCls = 'block text-sm font-medium text-[#1A2B48] dark:text-[#BF8F8F] mb-1.5';
+  const labelCls = 'block text-sm font-medium text-[#352F36] dark:text-[#BF8F8F] mb-1.5';
 
   const CancelBtn = (
     <Link
       to={`/memories/${id}`}
-      className="text-sm text-[#1A2B48]/50 dark:text-[#8C5D5D] hover:text-[#C96B60] dark:hover:text-[#BF8F8F] transition-colors"
+      className="text-sm text-[#352F36]/50 dark:text-[#8C5D5D] hover:text-[#C96B60] dark:hover:text-[#BF8F8F] transition-colors"
     >
       Cancel
     </Link>
@@ -269,11 +269,11 @@ const EditMemory = () => {
               <div>
                 <label className={labelCls}>Add Images</label>
                 <input ref={imageInputRef} type="file" accept="image/*" multiple onChange={handleImageChange}
-                  className="w-full cursor-pointer text-sm text-[#1A2B48]/60 dark:text-[#8C5D5D]
+                  className="w-full cursor-pointer text-sm text-[#352F36]/60 dark:text-[#8C5D5D]
                     file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-medium
                     file:bg-[#C96B60]/12 dark:file:bg-[#8E5B60]/30 file:text-[#C96B60] dark:file:text-[#BF8F8F]
                     hover:file:bg-[#C96B60]/20 dark:hover:file:bg-[#8E5B60]/50" />
-                <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] mt-1">Max 10 images total</p>
+                <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D] mt-1">Max 10 images total</p>
                 {imagePreviews.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {imagePreviews.map((preview, idx) => (
@@ -291,15 +291,15 @@ const EditMemory = () => {
               <div>
                 <label className={labelCls}>Add Videos</label>
                 <input ref={videoInputRef} type="file" accept="video/*" multiple onChange={handleVideoChange}
-                  className="w-full cursor-pointer text-sm text-[#1A2B48]/60 dark:text-[#8C5D5D]
+                  className="w-full cursor-pointer text-sm text-[#352F36]/60 dark:text-[#8C5D5D]
                     file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-medium
                     file:bg-[#C96B60]/12 dark:file:bg-[#8E5B60]/30 file:text-[#C96B60] dark:file:text-[#BF8F8F]
                     hover:file:bg-[#C96B60]/20 dark:hover:file:bg-[#8E5B60]/50" />
-                <p className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] mt-1">Max 3 videos total</p>
+                <p className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D] mt-1">Max 3 videos total</p>
                 {videos.length > 0 && (
                   <ul className="mt-3 space-y-1.5">
                     {videos.map((vid, idx) => (
-                      <li key={idx} className="flex items-center justify-between rounded-lg border border-white/40 dark:border-[#D9C1BF]/8 bg-white/30 dark:bg-[#40110D]/50 p-2 text-xs text-[#1A2B48]/60 dark:text-[#8C5D5D]">
+                      <li key={idx} className="flex items-center justify-between rounded-lg border border-white/40 dark:border-[#D9C1BF]/8 bg-white/30 dark:bg-[#40110D]/50 p-2 text-xs text-[#352F36]/60 dark:text-[#8C5D5D]">
                         <span className="truncate max-w-[75%]">📹 {vid.name}</span>
                         <button type="button" onClick={() => handleRemoveVideo(idx)}
                           className="w-5 h-5 bg-red-600/80 rounded-full flex items-center justify-center text-white text-xs hover:bg-red-500">
@@ -325,7 +325,7 @@ const EditMemory = () => {
               )}
               <button type="submit" disabled={saving}
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#C96B60] dark:bg-[#8E5B60] px-6 py-3.5 text-base font-semibold text-white hover:bg-[#B05A50] dark:hover:bg-[#BF8F8F]/80 shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                Save Changes ❤️
+                Save Changes
               </button>
               {error && (
                 <div className="w-full text-red-600 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-950/20 py-2.5 px-4 rounded-lg border border-red-200 dark:border-red-900/30">

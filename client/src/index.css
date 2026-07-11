@@ -1,13 +1,14 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   --accent-neutral: #6b7280;
   --pink: #BF8F8F;
-  --ink: #40110D;
-  --panel: #591F12;
+  --ink: #2A1218;
+  --panel: #5A2532;
   --border: #D9C1BF;
+  --gold: #CBA24A;
 }
 
 html {
@@ -15,84 +16,167 @@ html {
 }
 
 body {
-  @apply bg-[#FDF0EE] text-gray-900 font-sans antialiased transition-colors duration-300;
+  @apply bg-[#FDF6F0] text-gray-900 font-sans antialiased transition-colors duration-300;
   overflow-x: hidden;
 }
 
 .dark body {
-  background-color: #40110D;
-  background-image: radial-gradient(ellipse at 50% 30%, #591F12 0%, #40110D 45%, #2A0808 100%);
+  background-color: #2A1218;
+  background-image: radial-gradient(ellipse at 50% 30%, #5A2532 0%, #2A1218 45%, #1A0B10 100%);
   min-height: 100vh;
 }
 
 @layer components {
+  /* ══════════════════════════════════════════════════════════════
+     PREMIUM ROMANTIC DESIGN SYSTEM  (logged-in app surfaces)
+     Scoped under .romance-scope so the landing page is untouched.
+     ══════════════════════════════════════════════════════════════ */
+  .romance-scope {
+    font-family: 'Poppins', system-ui, sans-serif;
+    color: #352F36;
+  }
+  .romance-scope h1,
+  .romance-scope h2,
+  .romance-scope h3,
+  .romance-scope .font-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .romance-card {
+    background: #FFFFFF;
+    border: 1px solid #F1D7DD;
+    border-radius: 24px;
+    box-shadow: 0 15px 45px rgba(196, 69, 105, 0.08);
+    transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .romance-card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 60px rgba(196, 69, 105, 0.16);
+  }
+
+  .romance-glass {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .romance-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.7rem 1.4rem;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(135deg, #E85D75 0%, #C44569 100%);
+    box-shadow: 0 10px 24px rgba(232, 93, 117, 0.28);
+    transition: transform .3s ease, box-shadow .3s ease, filter .3s ease;
+  }
+  .romance-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(232, 93, 117, 0.42);
+    filter: brightness(1.04);
+  }
+  .romance-btn:active { transform: translateY(0) scale(0.98); }
+
+  .romance-btn-soft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    color: #C44569;
+    background: #FFF1F3;
+    border: 1px solid #F1D7DD;
+    transition: transform .3s ease, background .3s ease;
+  }
+  .romance-btn-soft:hover {
+    transform: translateY(-2px);
+    background: #F7CAD0;
+  }
+
+  .romance-chip {
+    background: #FFF1F3;
+    color: #C44569;
+    border: 1px solid #F1D7DD;
+    border-radius: 9999px;
+  }
+
   .memento-card {
-    @apply rounded-xl bg-white border border-gray-200 backdrop-blur-sm dark:bg-[#591F12]/75 dark:border-[#D9C1BF]/15;
+    @apply rounded-xl bg-white border border-gray-200 backdrop-blur-sm dark:bg-[#5A2532]/75 dark:border-[#CBA24A]/15;
   }
 
   .memento-input {
-    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:outline-none focus:ring-2 dark:border-[#D9C1BF]/20 dark:bg-[#40110D] dark:text-[#D9C1BF] dark:placeholder-[#8C5D5D];
+    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:outline-none focus:ring-2 dark:border-[#CBA24A]/20 dark:bg-[#2A1218] dark:text-[#D9C1BF] dark:placeholder-[#CBA24A]/40;
   }
 
   .memento-input:focus {
-    border-color: rgb(201 107 96 / 0.4);
-    --tw-ring-color: rgb(201 107 96 / 0.2);
+    border-color: rgb(92 26 40 / 0.4);
+    --tw-ring-color: rgb(92 26 40 / 0.2);
   }
 
   .dark .memento-input:focus {
-    border-color: rgb(217 193 191 / 0.5);
-    --tw-ring-color: rgb(217 193 191 / 0.15);
+    border-color: rgb(203 162 74 / 0.5);
+    --tw-ring-color: rgb(203 162 74 / 0.2);
   }
 
   .memento-btn-primary {
-    @apply rounded-md px-6 py-3 font-semibold text-white transition-all dark:text-[#D9C1BF];
-    background-color: #C96B60;
+    @apply rounded-md px-6 py-3 font-semibold text-white transition-all;
+    background-color: #5C1A28;
   }
 
   .memento-btn-primary:hover {
-    background-color: #B05A50;
+    background-color: #B8863E;
   }
 
   .dark .memento-btn-primary {
-    background-color: #591F12;
+    background-color: #CBA24A;
+    color: #2A1218;
   }
 
   .dark .memento-btn-primary:hover {
-    background-color: #8C5D5D;
+    background-color: #D4B05A;
   }
 
   .memento-btn {
     @apply rounded-xl px-5 py-2.5 font-semibold transition-all duration-300;
-    border: 1px solid rgba(201, 107, 96, 0.25);
-    background-color: rgba(201, 107, 96, 0.10);
-    color: #C96B60;
+    border: 1px solid rgba(92, 26, 40, 0.25);
+    background-color: rgba(92, 26, 40, 0.08);
+    color: #5C1A28;
   }
   .memento-btn:hover {
-    background-color: rgba(201, 107, 96, 0.20);
+    background-color: rgba(184, 134, 62, 0.15);
+    color: #B8863E;
   }
   .dark .memento-btn {
-    border-color: rgba(191, 143, 143, 0.20);
-    background-color: rgba(142, 91, 96, 0.20);
-    color: #BF8F8F;
+    border-color: rgba(203, 162, 74, 0.25);
+    background-color: rgba(203, 162, 74, 0.12);
+    color: #CBA24A;
   }
   .dark .memento-btn:hover {
-    background-color: rgba(142, 91, 96, 0.35);
+    background-color: rgba(203, 162, 74, 0.22);
   }
 
   .memento-btn-outline {
     @apply rounded-xl px-5 py-2.5 font-semibold transition-all duration-300;
-    border: 1px solid rgba(201, 107, 96, 0.30);
-    color: #C96B60;
+    border: 1px solid rgba(92, 26, 40, 0.30);
+    color: #5C1A28;
   }
   .memento-btn-outline:hover {
-    background-color: rgba(201, 107, 96, 0.08);
+    background-color: rgba(184, 134, 62, 0.10);
+    color: #B8863E;
+    border-color: rgba(184, 134, 62, 0.40);
   }
   .dark .memento-btn-outline {
-    border-color: rgba(191, 143, 143, 0.20);
-    color: #BF8F8F;
+    border-color: rgba(203, 162, 74, 0.30);
+    color: #CBA24A;
   }
   .dark .memento-btn-outline:hover {
-    background-color: rgba(142, 91, 96, 0.20);
+    background-color: rgba(203, 162, 74, 0.12);
   }
 
   .section-label {
@@ -182,59 +266,140 @@ body {
   user-select: none;
 }
 
-.dark .text-memoir-gold {
-  color: #D9C1BF;
+/* ── Dark mode global color remapping ──────────────────────────────────────
+   Rose accent (#5C1A28) → Gold (#CBA24A) for all interactive/icon elements.
+   Backgrounds: old burgundy palette → new deep plum palette.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Accent: burgundy (#5C1A28) → gold in dark mode */
+.dark .text-\[\#5C1A28\]   { color: #CBA24A !important; }
+.dark .bg-\[\#5C1A28\]     { background-color: #CBA24A !important; }
+.dark .border-\[\#5C1A28\] { border-color: rgba(203,162,74,0.4) !important; }
+.dark .fill-\[\#5C1A28\]   { fill: #CBA24A !important; }
+
+/* Hover amber (#B8863E) → dark-mode gold hover */
+.dark .hover\:text-\[\#B8863E\]:hover { color: #D4B05A !important; }
+.dark .hover\:bg-\[\#B8863E\]:hover   { background-color: #D4B05A !important; }
+.dark .group:hover .group-hover\:text-\[\#B8863E\] { color: #D4B05A !important; }
+.dark .group:hover .group-hover\:bg-\[\#B8863E\]   { background-color: #D4B05A !important; }
+
+/* Accent: muted rose → muted gold */
+.dark .text-\[\#BF8F8F\]   { color: #D9C1BF !important; }
+.dark .text-\[\#8C5D5D\]   { color: rgba(203,162,74,0.7) !important; }
+
+/* Background remap */
+.dark .bg-\[\#40110D\]  { background-color: #2A1218 !important; }
+.dark .bg-\[\#591F12\]  { background-color: #5A2532 !important; }
+.dark .bg-\[\#8E5B60\]  { background-color: #5A2532 !important; }
+.dark .bg-\[\#8C5D5D\]  { background-color: #5A2532 !important; }
+
+/* Generic white/grey cards in dark become deep plum */
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: rgba(90, 37, 50, 0.75) !important;
 }
+
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: rgba(203, 162, 74, 0.15) !important;
+}
+
+.dark .text-slate-400 { color: #D9C1BF !important; }
+.dark .text-slate-500 { color: rgba(203,162,74,0.6) !important; }
+
+/* Legacy bg overrides */
+.dark .bg-\[\#1A1A2E\],
+.dark .bg-\[\#16213E\] {
+  background-color: rgba(90, 37, 50, 0.75) !important;
+}
+
+.dark .border-\[\#2D2D4E\] {
+  border-color: rgba(203, 162, 74, 0.15) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ROMANTIC "DUSK" DARK MODE  (logged-in app only)
+   Everything below is scoped under .romance-scope (the AppLayout shell) so the
+   landing / auth pages keep their own theme. This gives the redesigned pages
+   (which only ship light classes) a cohesive warm rose-plum dark palette and
+   harmonises the older pages with it — so the user's chosen mode stays
+   consistent on every page until they flip the toggle themselves.
+
+   Palette:  deep #241016 · panel #3A1720 · soft #4A1E28 · rose #E8899A
+             text #EEDCDF · muted #C39CA6 · border rgba(238,200,208,.14)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Base ink + page background */
+.dark .romance-scope { color: #EEDCDF; }
+.dark .romance-scope.bg-romance-page,
+.dark .romance-scope .bg-romance-page {
+  background-image: radial-gradient(ellipse at 50% 25%, #4A1E28 0%, #2A1218 48%, #1A0B10 100%) !important;
+  background-color: #241016 !important;
+}
+
+/* Design-token component classes */
+.dark .romance-card {
+  background: #3A1720 !important;
+  border-color: rgba(238, 200, 208, 0.12) !important;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5) !important;
+}
+.dark .romance-glass {
+  background: rgba(36, 16, 22, 0.80) !important;
+  border-color: rgba(238, 200, 208, 0.10) !important;
+}
+.dark .romance-chip,
+.dark .romance-btn-soft {
+  background: #4A1E28 !important;
+  color: #E8899A !important;
+  border-color: rgba(238, 200, 208, 0.14) !important;
+}
+.dark .romance-btn-soft:hover { background: #5A2532 !important; }
+
+/* Surfaces — substring match also catches /90 /50 opacity + hover variants */
+.dark .romance-scope [class*="bg-white"],
+.dark .romance-scope [class*="bg-[#FFFFFF]"],
+.dark .romance-scope [class*="bg-[#FEFEFE]"] { background-color: #3A1720 !important; }
+.dark .romance-scope [class*="bg-[#FFF8F8]"] { background-color: #241016 !important; }
+.dark .romance-scope [class*="bg-[#FFF1F3]"] { background-color: #4A1E28 !important; }
+.dark .romance-scope [class*="bg-[#FFE1E7]"] { background-color: rgba(232, 93, 117, 0.16) !important; }
+.dark .romance-scope [class*="bg-[#F7CAD0]"] { background-color: #7A4A55 !important; }
+
+/* Text */
+.dark .romance-scope [class*="text-[#352F36]"] { color: #EEDCDF !important; }
+.dark .romance-scope [class*="text-[#7A6A73]"] { color: #C39CA6 !important; }
+.dark .romance-scope [class*="text-[#C44569]"] { color: #E8899A !important; }
+.dark .romance-scope [class*="text-[#E85D75]"] { color: #E8899A !important; }
+.dark .romance-scope [class*="text-[#F7CAD0]"] { color: #7A4A55 !important; }
+
+/* Borders */
+.dark .romance-scope [class*="border-[#F1D7DD]"],
+.dark .romance-scope [class*="border-[#F7CAD0]"] { border-color: rgba(238, 200, 208, 0.14) !important; }
+.dark .romance-scope [class*="border-[#E85D75]"] { border-color: rgba(232, 137, 154, 0.42) !important; }
+
+/* Gradient stops used by the redesigned cards */
+.dark .romance-scope [class*="from-white"] { --tw-gradient-from: #3A1720 var(--tw-gradient-from-position) !important; }
+.dark .romance-scope [class*="from-[#FFF1F3]"] { --tw-gradient-from: #4A1E28 var(--tw-gradient-from-position) !important; }
+.dark .romance-scope [class*="to-[#FFF1F3]"] { --tw-gradient-to: #4A1E28 var(--tw-gradient-to-position) !important; }
+.dark .romance-scope [class*="to-[#F7CAD0]"] { --tw-gradient-to: #7A4A55 var(--tw-gradient-to-position) !important; }
+
+.text-memoir-gold { color: #6b7280; }
+.dark .text-memoir-gold { color: #CBA24A; }
 
 .dark .text-memento-green,
 .dark .text-memento-navy {
   color: #D9C1BF;
 }
 
-.dark .bg-memento-green {
-  background-color: #591F12;
-}
+.dark .bg-memento-green { background-color: #5A2532; }
 
 .dark .hover\:bg-\[\#245a42\]:hover,
 .dark .hover\:bg-memento-green\/90:hover {
-  background-color: #8C5D5D;
-}
-
-.dark .bg-white,
-.dark .bg-gray-50,
-.dark .bg-gray-100 {
-  background-color: rgba(89, 31, 18, 0.75) !important;
-}
-
-.dark .border-gray-200,
-.dark .border-gray-300 {
-  border-color: rgba(217, 193, 191, 0.15) !important;
-}
-
-.dark .text-slate-400 {
-  color: #BF8F8F !important;
-}
-
-.dark .text-slate-500 {
-  color: #8C5D5D !important;
-}
-
-.dark .bg-\[\#1A1A2E\],
-.dark .bg-\[\#16213E\] {
-  background-color: rgba(89, 31, 18, 0.75) !important;
-}
-
-.dark .border-\[\#2D2D4E\] {
-  border-color: rgba(217, 193, 191, 0.15) !important;
-}
-
-.text-memoir-gold {
-  color: #6b7280;
+  background-color: #CBA24A;
 }
 
 .dark .memoir-card {
-  background: rgba(89, 31, 18, 0.65);
-  border: 1px solid rgba(217, 193, 191, 0.15);
+  background: rgba(90, 37, 50, 0.65);
+  border: 1px solid rgba(203, 162, 74, 0.15);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -244,13 +409,8 @@ body {
   border: 1px solid rgba(124, 58, 237, 0.15);
 }
 
-.dark .gold-divider {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.gold-divider {
-  border-color: rgba(107, 114, 128, 0.2);
-}
+.dark .gold-divider { border-color: rgba(203, 162, 74, 0.3); }
+.gold-divider { border-color: rgba(107, 114, 128, 0.2); }
 
 .serif-heading {
   font-family: Georgia, 'Times New Roman', serif;

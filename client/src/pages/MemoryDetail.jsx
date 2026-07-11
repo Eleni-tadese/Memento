@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import ConfirmModal from '../components/ConfirmModal';
 import AppLayout from '../components/AppLayout';
+import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
+import MovieRounded from '@mui/icons-material/MovieRounded';
+import MusicNoteRounded from '@mui/icons-material/MusicNoteRounded';
 
 const formatLongDate = (dateStr) => {
   if (!dateStr) return '';
@@ -64,7 +67,7 @@ const VideoCard = ({ video, isPlaying, onPlay, onClose }) => {
           {video.thumbnail_url ? (
             <img src={video.thumbnail_url} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-5xl">🎬</div>
+            <div className="flex h-full w-full items-center justify-center text-white/70"><MovieRounded style={{ fontSize: 48 }} /></div>
           )}
 
           <div className="absolute inset-0 bg-black/10" />
@@ -75,14 +78,14 @@ const VideoCard = ({ video, isPlaying, onPlay, onClose }) => {
             aria-label="Play video"
           >
             <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-2xl transition-all duration-300 hover:scale-110">
-              <span className="ml-1 text-2xl text-[#C96B60] dark:text-[#BF8F8F]">▶</span>
+              <span className="ml-1 text-[#C44569]"><PlayArrowRounded style={{ fontSize: 30 }} /></span>
             </span>
           </button>
         </div>
       )}
 
       <div className="flex items-center justify-between gap-3 border-t border-black/5 dark:border-[#D9C1BF]/8 px-4 py-3 text-sm">
-        <div className="min-w-0 text-[#1A2B48]/50 dark:text-[#8C5D5D]">
+        <div className="min-w-0 text-[#352F36]/50 dark:text-[#8C5D5D]">
           {durationLabel ? <span>Duration: {durationLabel}</span> : <span>Video</span>}
         </div>
         <a
@@ -149,17 +152,17 @@ const AudioPlayerItem = ({ src, index }) => {
     <div className="rounded-xl border border-white/40 dark:border-[#D9C1BF]/10 bg-white/60 dark:bg-[#591F12]/50 backdrop-blur-sm p-4 shadow-md">
       <audio ref={audioRef} src={src} preload="metadata" />
       <div className="flex items-center gap-4">
-        <span className="text-2xl">🎵</span>
+        <span className="text-[#C44569]"><MusicNoteRounded style={{ fontSize: 24 }} /></span>
         <div className="flex-1 min-w-0">
-          <p className="truncate text-sm font-medium text-[#1A2B48] dark:text-[#D9C1BF]">Audio clip {index + 1}</p>
-          <p className="text-xs text-[#1A2B48]/50 dark:text-[#8C5D5D]">{formatDuration(duration)}</p>
+          <p className="truncate text-sm font-medium text-[#352F36] dark:text-[#D9C1BF]">Audio clip {index + 1}</p>
+          <p className="text-xs text-[#352F36]/50 dark:text-[#8C5D5D]">{formatDuration(duration)}</p>
         </div>
         <button
           type="button"
           onClick={togglePlay}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#C96B60] dark:bg-[#8E5B60] text-white transition-colors hover:bg-[#B05A50] dark:hover:bg-[#BF8F8F]/80"
         >
-          {playing ? '⏸' : '▶'}
+          {playing ? '⏸' : ''}
         </button>
       </div>
       <div
@@ -266,7 +269,7 @@ const MemoryDetail = () => {
         comments: [...(prev.comments || []), newComment],
       }));
       setCommentText('');
-      showToast('Comment posted ❤️', 'success');
+      showToast('Comment posted', 'success');
     } catch (err) {
       showToast(err.response?.data?.message || 'Failed to post comment', 'error');
     } finally {
@@ -365,7 +368,7 @@ const MemoryDetail = () => {
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#C96B60]/30 to-[#8E5B60]/40 dark:from-[#591F12] dark:to-[#40110D] p-8">
-            <h1 className="font-display text-center text-3xl md:text-5xl text-[#1A2B48] dark:text-[#D9C1BF] drop-shadow-lg">
+            <h1 className="font-display text-center text-3xl md:text-5xl text-[#352F36] dark:text-[#D9C1BF] drop-shadow-lg">
               {memory.title}
             </h1>
           </div>
@@ -382,11 +385,11 @@ const MemoryDetail = () => {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-sm text-[#1A2B48]/50 dark:text-[#8C5D5D]">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-[#352F36]/50 dark:text-[#8C5D5D]">
             {memory.memory_date && <span>📅 {formatLongDate(memory.memory_date)}</span>}
-            {memory.location && <span>📍 {memory.location}</span>}
+            {memory.location && <span>{memory.location}</span>}
             <span className="rounded-full border border-[#C96B60]/20 dark:border-[#BF8F8F]/15 bg-[#C96B60]/8 dark:bg-[#8E5B60]/15 px-2 py-0.5 text-xs capitalize text-[#C96B60] dark:text-[#BF8F8F]">
-              👁 {memory.visibility === 'partner_only' ? 'partner only' : memory.visibility}
+              {memory.visibility === 'partner_only' ? 'partner only' : memory.visibility}
             </span>
           </div>
 
@@ -400,7 +403,7 @@ const MemoryDetail = () => {
             </div>
           )}
 
-          <p className="font-serif whitespace-pre-wrap pt-2 text-base leading-relaxed text-[#1A2B48] dark:text-[#D9C1BF]">
+          <p className="font-serif whitespace-pre-wrap pt-2 text-base leading-relaxed text-[#352F36] dark:text-[#D9C1BF]">
             {memory.body}
           </p>
         </section>
@@ -409,7 +412,7 @@ const MemoryDetail = () => {
       {/* Photo Gallery */}
       {images.length > 0 && (
         <section className="max-w-4xl w-full mx-auto mt-6 space-y-4">
-          <h2 className="text-xl font-serif font-bold text-[#1A2B48] dark:text-[#D9C1BF]">📸 Photos ({images.length})</h2>
+          <h2 className="text-xl font-serif font-bold text-[#352F36] dark:text-[#D9C1BF]">Photos ({images.length})</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {images.map((img, index) => (
               <div
@@ -432,7 +435,7 @@ const MemoryDetail = () => {
       {/* Videos */}
       {videos.length > 0 && (
         <section className="max-w-4xl w-full mx-auto mt-6 space-y-4">
-          <h2 className="text-xl font-serif font-bold text-[#1A2B48] dark:text-[#D9C1BF]">🎥 Videos ({videos.length})</h2>
+          <h2 className="text-xl font-serif font-bold text-[#352F36] dark:text-[#D9C1BF]">Videos ({videos.length})</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {videos.map((video) => (
               <VideoCard
@@ -450,7 +453,7 @@ const MemoryDetail = () => {
       {/* Audio */}
       {audioFiles.length > 0 && (
         <section className="max-w-4xl w-full mx-auto mt-6 space-y-4">
-          <h2 className="text-xl font-serif font-bold text-[#1A2B48] dark:text-[#D9C1BF]">🎵 Audio ({audioFiles.length})</h2>
+          <h2 className="text-xl font-serif font-bold text-[#352F36] dark:text-[#D9C1BF]">Audio ({audioFiles.length})</h2>
           <div className="space-y-3">
             {audioFiles.map((item, idx) => (
               <AudioPlayerItem key={item.id} src={item.media_url} index={idx} />
@@ -461,7 +464,7 @@ const MemoryDetail = () => {
 
       {/* Comments */}
       <section className="max-w-4xl w-full mx-auto mt-6 space-y-6">
-        <h2 className="text-xl font-serif font-bold text-[#1A2B48] dark:text-[#D9C1BF]">
+        <h2 className="text-xl font-serif font-bold text-[#352F36] dark:text-[#D9C1BF]">
           💬 Comments ({memory.comments?.length || 0})
         </h2>
 
@@ -476,16 +479,16 @@ const MemoryDetail = () => {
                   </div>
                   <div className="flex-1 rounded-xl bg-white/60 dark:bg-[#591F12]/40 border border-white/40 dark:border-[#D9C1BF]/8 backdrop-blur-sm p-4">
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="text-sm font-semibold text-[#1A2B48] dark:text-[#D9C1BF]">{comment.display_name}</span>
-                      <span className="text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D]">{formatTimestamp(comment.created_at)}</span>
+                      <span className="text-sm font-semibold text-[#352F36] dark:text-[#D9C1BF]">{comment.display_name}</span>
+                      <span className="text-xs text-[#352F36]/40 dark:text-[#8C5D5D]">{formatTimestamp(comment.created_at)}</span>
                     </div>
-                    <p className="font-serif text-sm leading-relaxed text-[#1A2B48]/80 dark:text-[#BF8F8F]">{comment.body}</p>
+                    <p className="font-serif text-sm leading-relaxed text-[#352F36]/80 dark:text-[#BF8F8F]">{comment.body}</p>
                   </div>
                 </div>
               );
             })
           ) : (
-            <p className="text-sm italic text-[#1A2B48]/50 dark:text-[#8C5D5D]">No comments yet. Leave a sweet note below ❤️</p>
+            <p className="text-sm italic text-[#352F36]/50 dark:text-[#8C5D5D]">No comments yet. Leave a sweet note below</p>
           )}
         </div>
 
@@ -512,7 +515,7 @@ const MemoryDetail = () => {
                   </svg>
                   Posting...
                 </>
-              ) : 'Post Comment ❤'}
+              ) : 'Post Comment'}
             </button>
           </div>
         </form>
@@ -524,7 +527,7 @@ const MemoryDetail = () => {
           <div className="flex items-center justify-end gap-3">
             <Link to={`/memories/${id}/edit`}
               className="px-4 py-2 rounded-xl border border-[#C96B60]/30 dark:border-[#BF8F8F]/20 text-[#C96B60] dark:text-[#BF8F8F] text-sm font-semibold hover:bg-[#C96B60]/8 dark:hover:bg-[#8E5B60]/20 transition-colors">
-              ✏️ Edit
+             Edit
             </Link>
             <button
               type="button"
@@ -532,7 +535,7 @@ const MemoryDetail = () => {
               disabled={deleting}
               className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
             >
-              {deleting ? 'Deleting...' : '🗑️ Delete'}
+              {deleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         </div>

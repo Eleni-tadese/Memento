@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
-const FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80';
+const FALLBACK_IMAGE = '/couple1.jpg';
 
 export const SafeImage = ({ src, alt, className, fallback = FALLBACK_IMAGE }) => {
   const [imgSrc, setImgSrc] = useState(src);
@@ -39,7 +38,7 @@ export const FloralWreath = ({ src, alt }) => (
       <path d="M110 18 Q125 50 142 72" stroke="#5a8f6a" strokeWidth="2.5" fill="none" opacity="0.6" />
       <circle cx="110" cy="110" r="78" stroke="#2D6A4F" strokeWidth="1" strokeDasharray="4 6" opacity="0.25" />
     </svg>
-    <div className="relative z-10 h-full w-full overflow-hidden rounded-full border-4 border-white shadow-lg dark:border-[#591F12]">
+    <div className="relative z-10 h-full w-full overflow-hidden rounded-full border-4 border-white shadow-lg dark:border-[#5A2532]">
       <SafeImage src={src} alt={alt} className="h-full w-full object-cover" />
     </div>
   </div>
@@ -81,38 +80,38 @@ export const StatItem = ({ value, label }) => (
 
 const CARD_STYLES = [
   {
-    wrapper: 'bg-white border-[#C96B60]/20',
-    iconBg: 'bg-[#C96B60]/10 text-[#C96B60]',
-    titleColor: 'text-[#B05A50]',
-    barColor: 'bg-[#C96B60]',
+    wrapper: 'bg-white border-[#5C1A28]/20',
+    iconBg: 'bg-[#5C1A28]/10 text-[#5C1A28]',
+    titleColor: 'text-[#B8863E]',
+    barColor: 'bg-[#5C1A28]',
   },
   {
     wrapper: 'bg-white border-[#E8BFB6]/30',
-    iconBg: 'bg-[#FDF0EE]/40 text-[#1A2B48]',
+    iconBg: 'bg-[#FDF6F0]/40 text-[#1A2B48]',
     titleColor: 'text-[#1A2B48]',
     barColor: 'bg-[#E8BFB6]',
   },
   {
-    wrapper: 'bg-white border-[#C96B60]/20',
-    iconBg: 'bg-[#C96B60]/10 text-[#C96B60]',
-    titleColor: 'text-[#B05A50]',
+    wrapper: 'bg-white border-[#5C1A28]/20',
+    iconBg: 'bg-[#5C1A28]/10 text-[#5C1A28]',
+    titleColor: 'text-[#B8863E]',
     barColor: 'bg-[#E8907A]',
   },
   {
     wrapper: 'bg-white border-[#E8BFB6]/30',
-    iconBg: 'bg-[#FDF0EE]/40 text-[#1A2B48]',
+    iconBg: 'bg-[#FDF6F0]/40 text-[#1A2B48]',
     titleColor: 'text-[#1A2B48]',
-    barColor: 'bg-[#FDF0EE]',
+    barColor: 'bg-[#FDF6F0]',
   },
   {
-    wrapper: 'bg-white border-[#C96B60]/20',
-    iconBg: 'bg-[#C96B60]/10 text-[#C96B60]',
-    titleColor: 'text-[#B05A50]',
-    barColor: 'bg-[#C96B60]',
+    wrapper: 'bg-white border-[#5C1A28]/20',
+    iconBg: 'bg-[#5C1A28]/10 text-[#5C1A28]',
+    titleColor: 'text-[#B8863E]',
+    barColor: 'bg-[#5C1A28]',
   },
   {
     wrapper: 'bg-white border-[#E8BFB6]/30',
-    iconBg: 'bg-[#FDF0EE]/40 text-[#1A2B48]',
+    iconBg: 'bg-[#FDF6F0]/40 text-[#1A2B48]',
     titleColor: 'text-[#1A2B48]',
     barColor: 'bg-[#E8BFB6]',
   },
@@ -122,15 +121,15 @@ export const ServiceCard = ({ icon: Icon, title, desc, index = 0 }) => {
   const style = CARD_STYLES[index % CARD_STYLES.length];
   return (
     <article
-      className={`group relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-[#D9C1BF]/10 dark:bg-[#591F12]/70 dark:hover:border-[#D9C1BF]/20 dark:hover:shadow-[#D9C1BF]/5 ${style.wrapper}`}
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-[#CBA24A]/10 dark:bg-[#5A2532]/70 dark:hover:border-[#D9C1BF]/20 dark:hover:shadow-[#D9C1BF]/5 ${style.wrapper}`}
     >
-      <div className={`h-1 w-full ${style.barColor} dark:bg-[#8C5D5D]`} />
+      <div className={`h-1 w-full ${style.barColor} dark:bg-[#CBA24A]`} />
       <div className="flex flex-col items-start p-7">
-        <div className={`mb-5 flex h-14 w-14 items-center justify-center rounded-xl ${style.iconBg} dark:bg-[#40110D] dark:text-[#D9C1BF]`}>
+        <div className={`mb-5 flex h-14 w-14 items-center justify-center rounded-xl ${style.iconBg} dark:bg-[#2A1218] dark:text-[#D9C1BF]`}>
           <Icon className="h-6 w-6" />
         </div>
         <h3 className={`mb-2 font-serif text-xl font-bold ${style.titleColor} dark:text-[#D9C1BF]`}>{title}</h3>
-        <p className="text-sm leading-relaxed text-gray-600 dark:text-[#8C5D5D]">{desc}</p>
+        <p className="text-sm leading-relaxed text-gray-600 dark:text-[#CBA24A]/70">{desc}</p>
       </div>
     </article>
   );
@@ -146,7 +145,7 @@ export const ShowcaseCard = ({ image, title, tag }) => (
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
-        <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm dark:bg-[#591F12]/70">
+        <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm dark:bg-[#5A2532]/70">
           {tag}
         </span>
       </div>

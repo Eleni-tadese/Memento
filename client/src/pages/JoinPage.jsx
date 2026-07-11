@@ -60,7 +60,7 @@ const JoinPage = () => {
       {/* Glow orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-[#C96B60]/8 dark:bg-[#8E5B60]/12 blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 h-56 w-56 rounded-full bg-[#7AAEC8]/10 dark:bg-[#591F12]/25 blur-2xl" />
+        <div className="absolute bottom-1/3 right-1/4 h-56 w-56 rounded-full bg-[#F7CAD0]/10 dark:bg-[#591F12]/25 blur-2xl" />
       </div>
 
       <div className="fixed top-4 left-4 z-50"><BackButton to="/" /></div>
@@ -75,20 +75,20 @@ const JoinPage = () => {
               <FlowerIcon className="h-8 w-8 text-[#C96B60] dark:text-[#BF8F8F]" />
               <h1 className="font-serif text-4xl font-bold text-[#C96B60] dark:text-[#D9C1BF]">Memento</h1>
             </div>
-            <p className="text-sm text-[#1A2B48]/60 dark:text-[#BF8F8F]">{"You've been invited to join your partner's space"}</p>
+            <p className="text-sm text-[#352F36]/60 dark:text-[#BF8F8F]">{"You've been invited to join your partner's space"}</p>
           </div>
 
           {/* Invitation badge */}
           <div className="mb-6 rounded-xl bg-[#C96B60]/8 dark:bg-[#8E5B60]/20 border border-[#C96B60]/20 dark:border-[#BF8F8F]/15 px-4 py-3 text-center">
             <p className="text-xs font-medium text-[#C96B60] dark:text-[#BF8F8F]">
-              💌 Partner invitation — create your account to accept
+              Partner invitation — create your account to accept
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label
-                className="block text-sm font-medium text-[#1A2B48] dark:text-[#BF8F8F] mb-1.5"
+                className="block text-sm font-medium text-[#352F36] dark:text-[#BF8F8F] mb-1.5"
                 htmlFor="fullname-input"
               >
                 Full Name
@@ -106,7 +106,7 @@ const JoinPage = () => {
 
             <div>
               <label
-                className="block text-sm font-medium text-[#1A2B48] dark:text-[#BF8F8F] mb-1.5"
+                className="block text-sm font-medium text-[#352F36] dark:text-[#BF8F8F] mb-1.5"
                 htmlFor="email-input"
               >
                 Email Address
@@ -124,7 +124,7 @@ const JoinPage = () => {
 
             <div>
               <label
-                className="block text-sm font-medium text-[#1A2B48] dark:text-[#BF8F8F] mb-1.5"
+                className="block text-sm font-medium text-[#352F36] dark:text-[#BF8F8F] mb-1.5"
                 htmlFor="password-input"
               >
                 Password
@@ -152,7 +152,7 @@ const JoinPage = () => {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
               )}
-              {loading ? 'Joining Memento...' : 'Join Memento ❤'}
+              {loading ? 'Joining Memento...' : 'Join Memento'}
             </button>
 
             {error && (
@@ -163,8 +163,8 @@ const JoinPage = () => {
           </form>
         </div>
 
-        <p className="text-center mt-4 text-xs text-[#1A2B48]/40 dark:text-[#8C5D5D] font-serif italic">
-          Private memories, shared love ❤
+        <p className="text-center mt-4 text-xs text-[#352F36]/40 dark:text-[#8C5D5D] font-serif italic">
+          Private memories, shared love
         </p>
       </div>
     </main>

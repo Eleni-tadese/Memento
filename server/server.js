@@ -38,6 +38,8 @@ app.use('/api/profile', profileRoutes)
 const messageRoutes = require('./src/routes/message.routes')
 app.use('/api/messages', messageRoutes)
 
+const lettersRoutes = require('./src/routes/letters.routes')
+app.use('/api/letters', lettersRoutes)
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
