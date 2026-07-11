@@ -9,9 +9,23 @@ const PORT = process.env.PORT || 5000
 
 const authRoutes = require('./src/routes/auth.routes')
 
+// Allowed browser origins. Add your deployed frontend URL(s) via the
+// ALLOWED_ORIGINS env var (comma-separated) or CLIENT_URL. Localhost and
+// Vercel preview domains are always allowed.
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || '')
+  .split(',')
+  .map(o => o.trim().replace(/\/$/, ''))
+  .filter(Boolean)
+
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin || origin.startsWith('http://localhost')) {
+    if (!origin) return callback(null, true)
+    const clean = origin.replace(/\/$/, '')
+    if (
+      clean.startsWith('http://localhost') ||
+      clean.endsWith('.vercel.app') ||
+      allowedOrigins.includes(clean)
+    ) {
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))
