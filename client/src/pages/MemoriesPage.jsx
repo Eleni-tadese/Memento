@@ -17,8 +17,11 @@ import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import EditRounded from '@mui/icons-material/EditRounded';
 import FormatQuoteRounded from '@mui/icons-material/FormatQuoteRounded';
 import LocalFloristRounded from '@mui/icons-material/LocalFloristRounded';
+import { getCoupleItem, setCoupleItem } from '../utils/coupleStorage';
+import { getQuotes, saveQuotes } from '../api/quotes';
 
 const FAVS_KEY = 'memento_fav_memories';
+const QUOTES_KEY = 'memento_couple_quotes';
 
 const MemoriesPage = () => {
   const navigate = useNavigate();
@@ -31,7 +34,7 @@ const MemoriesPage = () => {
   /* ── favorites (client-side flag, purely visual) ── */
   const [favs, setFavs] = useState(() => {
     try {
-      return new Set(JSON.parse(localStorage.getItem(FAVS_KEY) || '[]'));
+      return new Set(JSON.parse(getCoupleItem(FAVS_KEY) || '[]'));
     } catch {
       return new Set();
     }
@@ -40,7 +43,7 @@ const MemoriesPage = () => {
     setFavs((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
-      localStorage.setItem(FAVS_KEY, JSON.stringify([...next]));
+      setCoupleItem(FAVS_KEY, JSON.stringify([...next]));
       return next;
     });
   };
@@ -55,28 +58,43 @@ const MemoriesPage = () => {
     }
   };
 
-  /* ── Couple quotes / blessings (array) ── */
-  const loadQuotes = () => {
+  /* ── Couple quotes / blessings ──────────────────────────────────────────
+     Quotes now live on the SERVER, scoped to the relationship, so they are
+     shared between both partners and can never leak into another couple's
+     account. The scoped localStorage copy is kept only as an instant offline
+     cache while the request is in flight. */
+  const readCache = () => {
     try {
-      const raw = localStorage.getItem('memento_couple_quotes');
-      if (raw) return JSON.parse(raw);
-      const old = localStorage.getItem('memento_couple_quote');
-      if (old) {
-        const parsed = JSON.parse(old);
-        const arr = parsed ? [parsed] : [];
-        localStorage.setItem('memento_couple_quotes', JSON.stringify(arr));
-        localStorage.removeItem('memento_couple_quote');
-        return arr;
-      }
-      return [];
+      const raw = getCoupleItem(QUOTES_KEY);
+      return raw ? JSON.parse(raw) : [];
     } catch {
       return [];
     }
   };
 
-  const [quotes, setQuotes] = useState(loadQuotes);
+  const [quotes, setQuotes] = useState(readCache);
   const [editingIdx, setEditingIdx] = useState(null);
   const [tempQuote, setTempQuote] = useState({ text: '', author: '' });
+
+  // Load the authoritative list from the server on mount.
+  useEffect(() => {
+    let alive = true;
+    getQuotes()
+      .then((serverQuotes) => {
+        if (!alive) return;
+        setQuotes(serverQuotes);
+        setCoupleItem(QUOTES_KEY, JSON.stringify(serverQuotes));
+      })
+      .catch(() => { /* keep the cached copy on network / setup error */ });
+    return () => { alive = false; };
+  }, []);
+
+  // Persist a new list to the server (and mirror to the scoped cache).
+  const persistQuotes = (next) => {
+    setQuotes(next);
+    setCoupleItem(QUOTES_KEY, JSON.stringify(next));
+    saveQuotes(next).catch(() => { /* cache already updated; will re-sync next load */ });
+  };
 
   const openNew = () => {
     setTempQuote({ text: '', author: '' });
@@ -92,15 +110,13 @@ const MemoriesPage = () => {
     if (!tempQuote.text.trim()) return;
     const q = { text: tempQuote.text.trim(), author: tempQuote.author.trim() };
     const next = editingIdx === -1 ? [...quotes, q] : quotes.map((old, i) => (i === editingIdx ? q : old));
-    setQuotes(next);
-    localStorage.setItem('memento_couple_quotes', JSON.stringify(next));
+    persistQuotes(next);
     closeModal();
   };
 
   const deleteQuote = (i) => {
     const next = quotes.filter((_, idx) => idx !== i);
-    setQuotes(next);
-    localStorage.setItem('memento_couple_quotes', JSON.stringify(next));
+    persistQuotes(next);
     closeModal();
   };
 
@@ -461,7 +477,7 @@ const MemoriesPage = () => {
 
                     <div className="mt-auto pt-3 border-t border-[#F1D7DD]">
                       <span className="text-sm font-medium text-[#C44569] group-hover:gap-2 inline-flex items-center gap-1 transition-all">
-                        Read more →
+                        Relive this moment →
                       </span>
                     </div>
                   </div>

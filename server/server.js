@@ -41,6 +41,9 @@ app.use('/api/messages', messageRoutes)
 const lettersRoutes = require('./src/routes/letters.routes')
 app.use('/api/letters', lettersRoutes)
 
+const quotesRoutes = require('./src/routes/quotes.routes')
+app.use('/api/quotes', quotesRoutes)
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: "ok", timestamp: new Date() })

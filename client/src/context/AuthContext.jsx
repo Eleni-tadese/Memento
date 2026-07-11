@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { purgeLegacyCoupleKeys } from '../utils/coupleStorage';
 
 const AuthContext = createContext(null);
 
@@ -20,10 +21,16 @@ export const AuthProvider = ({ children }) => {
 
   const isAuthenticated = !!token;
 
+  // Remove any old un-scoped couple keys so they can't leak between accounts.
+  useEffect(() => {
+    purgeLegacyCoupleKeys();
+  }, []);
+
   const login = (newToken, newUser, newRelationshipId) => {
     localStorage.setItem('memento_token', newToken);
     localStorage.setItem('memento_user', JSON.stringify(newUser));
     localStorage.setItem('memento_relationship_id', newRelationshipId);
+    purgeLegacyCoupleKeys();
 
     setToken(newToken);
     setUser(newUser);

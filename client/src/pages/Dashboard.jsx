@@ -6,6 +6,8 @@ import { getMemories } from '../api/memories';
 import { Link, useNavigate } from 'react-router-dom';
 import AppLayout from '../components/AppLayout';
 import { getAllPhotos } from '../api/memories';
+import { getProfile } from '../api/profile';
+import { getCoupleItem, setCoupleItem, removeCoupleItem } from '../utils/coupleStorage';
 import FavoriteRounded from '@mui/icons-material/FavoriteRounded';
 import MailOutlineRounded from '@mui/icons-material/MailOutlineRounded';
 import PhotoLibraryRounded from '@mui/icons-material/PhotoLibraryRounded';
@@ -58,12 +60,47 @@ const CountdownTimer = ({ targetDate }) => {
   if (!time) return null;
 
   if (time.past) {
+    // Break the elapsed time into a human, romantic years / months / days form.
+    const start = new Date(targetDate);
+    const now = new Date();
+    let years = now.getFullYear() - start.getFullYear();
+    let months = now.getMonth() - start.getMonth();
+    let days = now.getDate() - start.getDate();
+    if (days < 0) {
+      months -= 1;
+      days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    }
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    const parts = [
+      { val: years, label: years === 1 ? 'year' : 'years' },
+      { val: months, label: months === 1 ? 'month' : 'months' },
+      { val: days, label: days === 1 ? 'day' : 'days' },
+    ].filter((p, i) => p.val > 0 || i === 2); // always keep days so it's never empty
+
     return (
       <div className="text-center">
-        <span className="text-6xl md:text-8xl font-serif font-bold text-[#BF8F8F] dark:text-[#D9C1BF] tabular-nums drop-shadow-lg">
-          {time.days}
-        </span>
-        <p className="mt-2 font-serif italic text-white/60">days together</p>
+        <p className="text-[9px] md:text-[11px] tracking-[0.4em] uppercase text-white/60 mb-3">
+          Together for
+        </p>
+        <div className="flex items-end justify-center gap-4 md:gap-7">
+          {parts.map(({ val, label }) => (
+            <div key={label} className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-serif font-bold text-white tabular-nums drop-shadow-lg leading-none">
+                {val}
+              </span>
+              <span className="mt-1.5 text-[10px] md:text-xs text-[#F7CAD0] tracking-[0.15em] lowercase">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3.5 font-serif italic text-white/70 text-sm md:text-base">
+          {`that's ${time.days.toLocaleString()} days of loving you`}
+        </p>
       </div>
     );
   }
@@ -90,90 +127,53 @@ const CountdownTimer = ({ targetDate }) => {
   );
 };
 
-// ─── Module-level orientation cache (survives slide transitions) ──────────────
-const _orientCache = new Map(); // url → 'landscape' | 'portrait'
-
-// ─── Smart hero slide: detects orientation, applies correct display mode ──────
+// ─── Hero slide: full uncropped photo over a soft blurred fill of itself ──────
 const HeroSlide = ({ url, label, kbAnim }) => {
-  // Seed from cache so re-visited slides render correctly on first paint
-  const [orient, setOrient] = useState(() => _orientCache.get(url) ?? 'landscape');
-  const isPortrait = orient === 'portrait';
-
-  const onImgLoad = useCallback((e) => {
-    const { naturalWidth: w, naturalHeight: h } = e.target;
-    // Treat anything with aspect-ratio < 1.2 as portrait/square
-    const detected = w / h < 1.2 ? 'portrait' : 'landscape';
-    _orientCache.set(url, detected);
-    setOrient(detected);
-  }, [url]);
-
+  // The photo is shown COMPLETE (never cropped). The section is still filled
+  // edge-to-edge by a soft, bright, blurred copy of the same photo — so there
+  // are no dark side bars and it reads as one clear, immersive background.
   return (
     <>
-      {/* ── Layer 1: blurred background – portrait/square only, carries Ken Burns ── */}
-      {isPortrait && (
-        <div
-          className="absolute inset-0 overflow-hidden"
+      {/* ── Layer 1: bright blurred fill of the same photo (no dark bars) ── */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          animation: `${kbAnim} 12s cubic-bezier(0.45,0,0.55,1) forwards`,
+          willChange: 'transform',
+          zIndex: 0,
+        }}
+      >
+        <img
+          src={url}
+          alt=""
+          aria-hidden="true"
+          className="absolute object-cover"
           style={{
-            animation: `${kbAnim} 10s cubic-bezier(0.45,0,0.55,1) forwards`,
-            willChange: 'transform',
+            top: '-40px', left: '-40px',
+            width: 'calc(100% + 80px)', height: 'calc(100% + 80px)',
+            transform: 'scale(1.08)',
+            filter: 'blur(14px) brightness(1.02) saturate(1.25)',
           }}
-        >
-          {/* Extend -40px past every edge so blur never bleeds at the border */}
-          <img
-            src={url}
-            alt=""
-            aria-hidden="true"
-            className="absolute object-cover"
-            style={{
-              top: '-40px', left: '-40px',
-              width: 'calc(100% + 80px)', height: 'calc(100% + 80px)',
-              filter: 'blur(25px) brightness(0.45)',
-            }}
-          />
-        </div>
-      )}
+        />
+      </div>
 
-      {/* ── Layer 2: semi-transparent dark overlay (portrait/square only) ── */}
-      {isPortrait && (
-        <div className="absolute inset-0 bg-black/25" style={{ zIndex: 1 }} />
-      )}
-
-      {/* ── Layer 3: sharp image
-              landscape → object-cover + Ken Burns on the image itself
-              portrait  → object-contain, perfectly centred, no zoom (avoids crop) ── */}
+      {/* ── Layer 2: the sharp, FULL photo – object-contain, centred, always
+              uncropped (kept static so the zoom never clips its edges) ── */}
       <img
         src={url}
         alt={label}
-        onLoad={onImgLoad}
         loading="lazy"
-        className={`absolute inset-0 w-full h-full ${isPortrait ? 'object-contain' : 'object-cover'}`}
-        style={
-          isPortrait
-            ? { zIndex: 2 }
-            : {
-                animation: `${kbAnim} 8s cubic-bezier(0.45,0,0.55,1) forwards`,
-                willChange: 'transform',
-                transformOrigin: 'center center',
-                zIndex: 2,
-              }
-        }
+        className="absolute inset-0 w-full h-full object-contain"
+        style={{ zIndex: 2 }}
       />
 
-      {/* ── Cinematic vignette ── */}
+      {/* ── Cinematic gradient – light, only to keep the hero text readable ── */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 3,
-          background: isPortrait
-            ? 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.5) 100%)'
-            : 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.7) 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          zIndex: 3,
-          background: 'linear-gradient(to right, rgba(0,0,0,0.12), transparent 30%, transparent 70%, rgba(0,0,0,0.12))',
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, transparent 35%, transparent 62%, rgba(0,0,0,0.5) 100%)',
         }}
       />
     </>
@@ -203,7 +203,7 @@ const Dashboard = () => {
   const [heroSlide, setHeroSlide] = useState(0);
   const [kenBurnsKeys, setKenBurnsKeys] = useState({}); // { slideIdx: visitCount }
   const [heroImages, setHeroImages] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('memento_hero_images') || '[]'); }
+    try { return JSON.parse(getCoupleItem('memento_hero_images') || '[]'); }
     catch { return []; }
   });
   const [showHeroPicker, setShowHeroPicker] = useState(false);
@@ -217,12 +217,23 @@ const Dashboard = () => {
   useEffect(() => { heroImagesRef.current = heroImages; }, [heroImages]);
 
   // ── Couple profile photos ──────────────────────────────────────────────────
+  // Stored as a map keyed by USER ID ({ [userId]: url }) so each photo belongs
+  // to a specific person, not to a "mine/partner" slot. Both partners share the
+  // same relationship-scoped record, so a photo never appears on the wrong side
+  // when the other partner logs in.
   const [couplePhotos, setCouplePhotos] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('memento_couple_photos') || '{"mine":"","partner":""}'); }
-    catch { return { mine: '', partner: '' }; }
+    try {
+      const parsed = JSON.parse(getCoupleItem('memento_couple_photos') || '{}');
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch { return {}; }
   });
+  const [selfUserId, setSelfUserId] = useState(() => (user?.id ? String(user.id) : ''));
+  const [partnerUserId, setPartnerUserId] = useState('');
   const [editingPhoto, setEditingPhoto] = useState(null);
   const [photoInput, setPhotoInput] = useState('');
+
+  const myPhoto = couplePhotos[selfUserId] || '';
+  const partnerPhoto = couplePhotos[partnerUserId] || '';
 
   // ── Invite link copy state ────────────────────────────────────────────────
   const [linkCopied, setLinkCopied] = useState(false);
@@ -237,7 +248,7 @@ const Dashboard = () => {
   };
 
   // ── Special date / countdown ───────────────────────────────────────────────
-  const [specialDate, setSpecialDate] = useState(() => localStorage.getItem('memento_special_date') || '');
+  const [specialDate, setSpecialDate] = useState(() => getCoupleItem('memento_special_date') || '');
   const [editingDate, setEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState('');
 
@@ -252,10 +263,15 @@ const Dashboard = () => {
       getInviteLink().catch(() => null),
       getMemories({ limit: 30 }).catch(() => null),
       getAllPhotos().catch(() => null),
-    ]).then(([inv, mem, ph]) => {
+      getProfile().catch(() => null),
+    ]).then(([inv, mem, ph, prof]) => {
       setInviteData(inv);
       const mems = mem?.memories || [];
       setMemories(mems);
+
+      // Identify who is who so couple photos map to the right person.
+      if (prof?.self?.id) setSelfUserId(String(prof.self.id));
+      if (prof?.partner?.id) setPartnerUserId(String(prof.partner.id));
 
       // All individual photos for the picker
       const photos = ph?.photos || [];
@@ -277,7 +293,7 @@ const Dashboard = () => {
         if (validUrls.size === 0) return prev;
         const valid = prev.filter(h => validUrls.has(h.url));
         if (valid.length !== prev.length) {
-          localStorage.setItem('memento_hero_images', JSON.stringify(valid));
+          setCoupleItem('memento_hero_images', JSON.stringify(valid));
         }
         return valid;
       });
@@ -321,16 +337,21 @@ const Dashboard = () => {
       const next = exists
         ? prev.filter(h => h.url !== url)
         : prev.length < 6 ? [...prev, { url, label }] : prev;
-      localStorage.setItem('memento_hero_images', JSON.stringify(next));
+      setCoupleItem('memento_hero_images', JSON.stringify(next));
       return next;
     });
   };
 
   // ── Couple photo helpers ──────────────────────────────────────────────────
+  // 'who' is the UI slot ('mine' | 'partner'); resolve it to the actual user id.
+  const photoKeyFor = (who) => (who === 'mine' ? selfUserId : partnerUserId);
+
   const saveCouplePhoto = (who, url) => {
-    const next = { ...couplePhotos, [who]: url };
+    const key = photoKeyFor(who);
+    if (!key) { setEditingPhoto(null); return; }
+    const next = { ...couplePhotos, [key]: url };
     setCouplePhotos(next);
-    localStorage.setItem('memento_couple_photos', JSON.stringify(next));
+    setCoupleItem('memento_couple_photos', JSON.stringify(next));
     setEditingPhoto(null);
     setPhotoInput('');
   };
@@ -338,8 +359,8 @@ const Dashboard = () => {
   // ── Special date helper ───────────────────────────────────────────────────
   const saveSpecialDate = (d) => {
     setSpecialDate(d);
-    if (d) localStorage.setItem('memento_special_date', d);
-    else localStorage.removeItem('memento_special_date');
+    if (d) setCoupleItem('memento_special_date', d);
+    else removeCoupleItem('memento_special_date');
     setEditingDate(false);
   };
 
@@ -406,25 +427,38 @@ const Dashboard = () => {
 
         {/* ── Hero text (always above the image, never moves) ── */}
         {heroImages.length > 0 && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center text-white px-6 pointer-events-none">
-            <p className="hero-text-enter text-xs tracking-[0.5em] uppercase text-white/55 mb-4 font-sans">
-              Welcome back
-            </p>
-            <h1 className="hero-text-enter-delay font-serif text-5xl md:text-7xl font-bold drop-shadow-2xl leading-tight">
-              {user?.display_name?.split(' ')[0] || 'Our'}
-              {inviteData?.partnerJoined
-                ? <span> <span className="text-[#BF8F8F]">&</span> {partnerName.split(' ')[0]}</span>
-                : "'s Story"
-              }
-            </h1>
-            <p className="hero-text-enter-delay2 font-serif italic text-lg md:text-xl text-white/65 mt-3 drop-shadow">
-              A private space for your memories
-            </p>
-            {specialDate && (
-              <div className="hero-text-enter-delay2 mt-6 pointer-events-auto">
-                <CountdownTimer targetDate={specialDate} />
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-end text-center text-white px-6 pb-12 md:pb-16 pointer-events-none">
+            <div className="hero-text-enter inline-block rounded-[26px] border border-white/15 bg-black/20 backdrop-blur-sm px-6 py-5 md:px-10 md:py-6 shadow-[0_16px_48px_rgba(0,0,0,0.3)]">
+              {/* small label with decorative rules */}
+              <div className="flex items-center justify-center gap-2.5 mb-2.5">
+                <span className="h-px w-6 bg-white/40" />
+                <p className="text-[9px] md:text-[11px] tracking-[0.45em] uppercase text-white/70 font-sans">
+                  {inviteData?.partnerJoined ? 'Our Love Story' : 'Your Love Story'}
+                </p>
+                <span className="h-px w-6 bg-white/40" />
               </div>
-            )}
+              <h1 className="font-serif text-4xl md:text-6xl font-bold drop-shadow-2xl leading-tight">
+                {inviteData?.partnerJoined
+                  ? <span>{user?.display_name?.split(' ')[0] || 'You'} <span className="text-[#F7CAD0] italic font-normal">&</span> {partnerName.split(' ')[0]}</span>
+                  : <span>Forever, <span className="text-[#F7CAD0] italic font-normal">{user?.display_name?.split(' ')[0] || 'my love'}</span></span>
+                }
+              </h1>
+              <div className="mx-auto mt-2.5 flex items-center justify-center gap-2 text-white/70">
+                <span className="h-px w-8 bg-gradient-to-r from-transparent to-white/50" />
+                <FavoriteRounded style={{ fontSize: 14 }} className="text-[#F7CAD0]" />
+                <span className="h-px w-8 bg-gradient-to-l from-transparent to-white/50" />
+              </div>
+              <p className="font-serif italic text-sm md:text-lg text-white/80 mt-2.5 drop-shadow">
+                {inviteData?.partnerJoined
+                  ? 'Where our hearts keep every memory'
+                  : 'Every love story is beautiful — this one is ours'}
+              </p>
+              {specialDate && (
+                <div className="mt-4 pointer-events-auto">
+                  <CountdownTimer targetDate={specialDate} />
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -581,15 +615,13 @@ const Dashboard = () => {
           </>
         )}
 
-        {/* ── Edit photos button (top-right corner, always visible) ── */}
+        {/* ── Curate photos button (top-right corner, always visible) ── */}
         <button
           onClick={() => setShowHeroPicker(true)}
-          className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-sm text-white/80 text-xs hover:bg-black/55 transition-colors"
+          className="group absolute top-5 right-5 z-20 flex items-center gap-2 px-4 py-2 rounded-full border border-white/25 bg-white/15 backdrop-blur-md text-white text-xs font-medium tracking-wide shadow-lg hover:bg-white/25 hover:border-white/40 transition-all duration-300"
         >
-          <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-          </svg>
-          {heroImages.length === 0 ? 'Add Photos' : 'Edit Photos'}
+          <FavoriteRounded style={{ fontSize: 15 }} className="text-[#F7CAD0] group-hover:scale-110 transition-transform" />
+          {heroImages.length === 0 ? 'Set our backdrop' : 'Curate our gallery'}
         </button>
       </section>
 
@@ -613,9 +645,9 @@ const Dashboard = () => {
             <div className="flex flex-col items-center gap-4">
               <div className="relative group">
                 <div className="w-36 h-40 md:w-44 md:h-52 rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-[#591F12]">
-                  {couplePhotos.mine ? (
+                  {myPhoto ? (
                     <img
-                      src={couplePhotos.mine}
+                      src={myPhoto}
                       alt="You"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
@@ -629,7 +661,7 @@ const Dashboard = () => {
                   {user?.display_name?.split(' ')[0] || 'You'}
                 </div>
                 <button
-                  onClick={() => { setEditingPhoto('mine'); setPhotoInput(couplePhotos.mine || ''); }}
+                  onClick={() => { setEditingPhoto('mine'); setPhotoInput(myPhoto); }}
                   className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
                   title="Change photo"
                 >
@@ -682,9 +714,9 @@ const Dashboard = () => {
                 /* ── Partner has joined → show their photo card ── */
                 <div className="relative group">
                   <div className="w-36 h-40 md:w-44 md:h-52 rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-[#591F12]">
-                    {couplePhotos.partner ? (
+                    {partnerPhoto ? (
                       <img
-                        src={couplePhotos.partner}
+                        src={partnerPhoto}
                         alt="Partner"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       />
@@ -698,7 +730,7 @@ const Dashboard = () => {
                     {partnerName.split(' ')[0]}
                   </div>
                   <button
-                    onClick={() => { setEditingPhoto('partner'); setPhotoInput(couplePhotos.partner || ''); }}
+                    onClick={() => { setEditingPhoto('partner'); setPhotoInput(partnerPhoto); }}
                     className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
                     title="Change photo"
                   >
@@ -950,7 +982,7 @@ const Dashboard = () => {
                   <button
                     onClick={() => {
                       setHeroImages([]);
-                      localStorage.removeItem('memento_hero_images');
+                      removeCoupleItem('memento_hero_images');
                     }}
                     className="px-4 py-2.5 rounded-xl border border-red-300 dark:border-red-800/50 text-red-500 text-sm hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
                   >
@@ -1031,7 +1063,7 @@ const Dashboard = () => {
                 >
                   Save Photo
                 </button>
-                {couplePhotos[editingPhoto] && (
+                {couplePhotos[photoKeyFor(editingPhoto)] && (
                   <button
                     onClick={() => saveCouplePhoto(editingPhoto, '')}
                     className="px-4 py-2.5 rounded-xl border border-red-300 dark:border-red-800/50 text-red-500 text-sm hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
